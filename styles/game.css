@@ -1,0 +1,2600 @@
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body { height: 100%; background: #000; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#app {
+  width: 100vw;
+  max-width: 430px;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.screen { display: none; width: 100%; height: 100%; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ── 전환 오버레이 ── */
+#overlay {
+  position: fixed; inset: 0; background: #000;
+  z-index: 999; pointer-events: none; opacity: 0;
+  transition: opacity 0.25s;
+}
+#overlay.show { opacity: 1; }
+
+/* ════════════════════════════════════
+   도트 캐릭터 SVG 스프라이트
+════════════════════════════════════ */
+
+/* ──────────────────────
+   TITLE SCREEN
+────────────────────── */
+#title-screen {
+  background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 52%, var(--gnd1) 52%, var(--gnd2) 100%);
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0;
+}
+
+.title-logo-box {
+  background: var(--panel);
+  border: 3px solid var(--gold);
+  padding: 16px 24px 12px;
+  margin-top: 28px;
+  text-align: center;
+  box-shadow: 4px 4px 0 #000;
+}
+.title-logo-box h1 {
+  font-size: 28px;
+  color: var(--gold);
+  text-shadow: 3px 3px 0 #000;
+  line-height: 1.3;
+}
+.title-logo-box p { font-size: 13px; color: var(--cream); margin-top: 6px; }
+
+.title-battle-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  width: 100%;
+  padding: 0 32px 0;
+  flex: 1;
+}
+
+.title-sprite-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.title-sprite-label { color: #fff; font-size: 12px; text-shadow: 2px 2px 0 #000; }
+.title-vs { color: #fff; font-size: 28px; font-weight: 900; text-shadow: 3px 3px 0 #000; align-self: center; }
+
+.sprite-shadow {
+  width: 52px; height: 10px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 50%;
+  animation: shd 2s ease-in-out infinite;
+}
+@keyframes shd { 0%,100%{transform:scaleX(1);opacity:.4} 50%{transform:scaleX(.7);opacity:.2} }
+
+.title-bottom {
+  width: 100%;
+  background: var(--panel);
+  border-top: 3px solid var(--border);
+  padding: 18px 20px 20px;
+}
+.title-bottom p { color: var(--cream); font-size: 14px; margin-bottom: 12px; }
+
+.mode-tabs { display: flex; gap: 4px; margin-bottom: 14px; }
+.mode-tab {
+  flex: 1; padding: 10px 4px;
+  background: #222238; border: 3px solid #444;
+  color: #777; font-family: var(--px); font-size: 12px;
+  cursor: pointer; text-align: center; transition: all .1s;
+}
+.mode-tab.on { background: #1a3a6a; border-color: var(--blue); color: var(--cream); }
+.mode-tab:active { transform: translateY(1px); }
+
+.btn-start {
+  width: 100%; padding: 16px;
+  background: #1a3a8a; border: 3px solid var(--blue);
+  color: var(--cream); font-family: var(--px); font-size: 18px;
+  cursor: pointer; box-shadow: 0 4px 0 #0a1a50;
+  letter-spacing: 2px; transition: all .1s;
+}
+.btn-start:active { transform: translateY(2px); box-shadow: 0 2px 0 #0a1a50; }
+
+/* ──────────────────────
+   TEAM SELECT
+────────────────────── */
+#team-screen {
+  background: var(--panel);
+  justify-content: center;
+  align-items: center;
+  padding: 24px 20px;
+  gap: 14px;
+}
+.team-h1 { color: var(--gold); font-size: 20px; text-shadow: 2px 2px 0 #000; }
+.team-sub { color: #888; font-size: 13px; }
+.team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+.team-card {
+  background: #222238; border: 3px solid #444;
+  padding: 18px 10px; cursor: pointer;
+  text-align: center; transition: all .1s;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.team-card.on, .team-card:hover { border-color: var(--gold); background: #2a2a44; }
+.team-card:active { transform: scale(.97); }
+.team-card-emoji { font-size: 40px; }
+.team-card-name { color: var(--gold); font-size: 13px; }
+.team-card-desc { color: #777; font-size:12px; }
+
+.btn-team-confirm {
+  width: 100%; padding: 16px;
+  background: #1a5a1a; border: 3px solid var(--green);
+  color: var(--cream); font-family: var(--px); font-size: 16px;
+  cursor: pointer; box-shadow: 0 4px 0 #0a300a;
+  transition: all .1s;
+}
+.btn-team-confirm:active { transform: translateY(2px); box-shadow: 0 2px 0 #0a300a; }
+
+/* ──────────────────────
+   MAP SCREEN
+────────────────────── */
+#map-screen {
+  background: linear-gradient(180deg, #4a6898 0%, #7090b8 28%, #4a7828 28%, #2a4818 100%);
+  flex-direction: column;
+}
+
+.map-hud {
+  background: var(--panel);
+  border-bottom: 3px solid var(--border);
+  padding: 12px 16px;
+}
+
+.map-hud-row1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.lv-badge {
+  background: var(--gold-dk); border: 2px solid var(--gold);
+  padding: 4px 12px; color: #000; font-size: 14px; font-weight: bold;
+}
+
+.team-hud-badge {
+  background: #222238; border: 2px solid #444;
+  padding: 4px 10px; color: var(--cream); font-size: 13px;
+  display: none;
+}
+.team-hud-badge.show { display: block; }
+
+.hud-stats { display: flex; gap: 10px; }
+.hstat {
+  display: flex; align-items: center; gap: 6px;
+  background: #101020; border: 2px solid #333;
+  padding: 5px 10px;
+}
+.hstat-lbl { color: #777; font-size: 12px; }
+.hstat-bar { width: 48px; height: 8px; background: #222; border: 1px solid #000; overflow: hidden; }
+.hstat-fill { height: 100%; transition: width .4s; }
+.hstat-val { color: var(--gold); font-size: 13px; font-weight: bold; min-width: 24px; }
+
+.exp-hud {
+  display: flex; align-items: center; gap: 8px;
+  background: #101020; border-top: 2px solid #222;
+  padding: 6px 16px;
+}
+.exp-lbl { color: var(--cyan); font-size: 12px; min-width: 30px; }
+.exp-bar-wrap { flex: 1; height: 8px; background: #222; border: 1px solid #000; overflow: hidden; }
+.exp-bar-fill { height: 100%; background: var(--cyan); transition: width .6s; }
+.exp-val { color: var(--cyan); font-size: 12px; min-width: 56px; text-align: right; }
+
+.map-topbar {
+  background: #0a0a18;
+  border-bottom: 2px solid #222;
+  padding: 7px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.map-topbar-title { color: var(--cream); font-size: 13px; }
+.map-topbar-prog { color: var(--gold); font-size: 12px; }
+
+.map-scroll { flex: 1; overflow-y: auto; padding: 12px; }
+.map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.map-tile {
+  background: #2a4418; border: 3px solid #3a6028;
+  padding: 14px 12px; cursor: pointer; transition: all .1s;
+  display: flex; align-items: center; gap: 10px;
+  min-height: 76px; box-shadow: 0 3px 0 #142010;
+  position: relative;
+}
+.map-tile:active { transform: translateY(2px); box-shadow: none; }
+.map-tile:hover { border-color: var(--gold); }
+.map-tile.done { background: #222; border-color: #444; opacity: .55; box-shadow: none; cursor: default; }
+.map-tile.done:hover { border-color: #444; }
+.map-tile.done:active { transform: none; }
+
+.tile-ico { font-size: 30px; }
+.tile-info { flex: 1; }
+.tile-name { color: var(--cream); font-size: 14px; font-weight: bold; }
+.tile-sub { color: #888; font-size:12px; margin-top: 3px; }
+.tile-stars { display: flex; gap: 2px; margin-top: 4px; }
+.star { font-size:12px; color: var(--gold); }
+.star.off { color: #333; }
+.tile-check { position: absolute; top: 7px; right: 9px; color: var(--green); font-size: 15px; }
+
+.lb-btn {
+  width: calc(100% - 24px); margin: 0 12px 12px;
+  padding: 12px; background: #101028; border: 3px solid var(--blue);
+  color: var(--cream); font-family: var(--px); font-size: 14px;
+  cursor: pointer; transition: all .1s;
+}
+.lb-btn:active { transform: translateY(1px); }
+
+/* ──────────────────────
+   ENCOUNTER SCREEN
+────────────────────── */
+#encounter-screen {
+  background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 50%, var(--sand1) 50%, var(--sand2) 100%);
+  flex-direction: column;
+  justify-content: flex-end;
+  cursor: pointer;
+}
+
+.enc-arena {
+  flex: 1; display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 0 24px 8px;
+  position: relative;
+}
+
+.enc-side { display: flex; flex-direction: column; align-items: center; }
+.enc-side.player { align-self: flex-end; margin-bottom: -12px; }
+.enc-side.enemy { align-self: flex-end; margin-bottom: 16px; }
+
+.enc-platform {
+  width: 80px; height: 20px;
+  background: rgba(0,0,0,.2); border-radius: 50%;
+  margin-top: 4px;
+}
+
+.pball-row { display: flex; gap: 4px; margin-bottom: 6px; }
+.pball {
+  width: 15px; height: 15px; border-radius: 50%;
+  border: 2px solid #000; position: relative; overflow: hidden;
+  background: linear-gradient(180deg, #e83030 50%, #fff 50%);
+}
+.pball::after {
+  content: ''; position: absolute;
+  top: 50%; left: 0; right: 0; height: 2px;
+  background: #000; transform: translateY(-50%);
+}
+.pball.used { background: #555; }
+.pball::before {
+  content: ''; position: absolute;
+  top: 3px; left: 3px; width: 4px; height: 4px;
+  background: rgba(255,255,255,.5); border-radius: 50%;
+}
+
+.enc-balls-enemy { position: absolute; top: 14px; left: 16px; }
+.enc-balls-player { position: absolute; top: 14px; right: 16px; }
+
+.enc-dialog {
+  width: 100%; background: var(--panel);
+  border-top: 3px solid var(--border);
+  padding: 18px 22px 22px; min-height: 100px;
+}
+.enc-dialog-text { color: var(--cream); font-size: 19px; line-height: 1.65; }
+.enc-tap { color: #555; font-size: 12px; text-align: right; margin-top: 8px; }
+.cursor-blink {
+  display: inline-block; width: 12px; height: 16px;
+  background: var(--cream); margin-left: 4px;
+  vertical-align: middle; animation: blink .8s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ──────────────────────
+   BATTLE SCREEN
+────────────────────── */
+#battle-screen {
+  background: linear-gradient(180deg, #90b0d0 0%, #c0d8e8 44%, #50902a 44%, #306018 100%);
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.battle-stage {
+  flex: 1; position: relative; overflow: hidden;
+  min-height: 220px;
+}
+
+/* 적 HUD — 왼쪽 위 */
+.b-hud-enemy {
+  position: absolute; top: 12px; left: 10px;
+  background: var(--panel); border: 3px solid var(--border);
+  padding: 10px 14px; min-width: 190px;
+  box-shadow: 4px 4px 0 #000;
+}
+/* 플레이어 HUD — 오른쪽 아래 */
+.b-hud-player {
+  position: absolute; bottom: 10px; right: 10px;
+  background: var(--panel); border: 3px solid var(--border);
+  padding: 10px 14px; min-width: 200px;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.b-hud-name-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px;
+}
+.b-hud-name { color: var(--cream); font-size: 15px; font-weight: bold; }
+.b-hud-lv { color: var(--cream); font-size: 13px; }
+.b-hud-lv span { color: var(--gold); }
+
+.b-hp-row { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }
+.b-hp-lbl { color: var(--green); font-size: 12px; font-weight: bold; min-width: 26px; }
+.b-hp-bg { flex: 1; height: 10px; background: #222; border: 2px solid #000; overflow: hidden; }
+.b-hp-fill { height: 100%; background: var(--green); transition: width .6s ease; }
+.b-hp-fill.mid { background: var(--gold); }
+.b-hp-fill.low { background: var(--red); }
+.b-hp-num { color: var(--cream); font-size: 13px; text-align: right; margin-bottom: 5px; }
+
+.b-exp-row { display: flex; align-items: center; gap: 7px; }
+.b-exp-lbl { color: var(--cyan); font-size:12px; min-width: 26px; }
+.b-exp-bg { flex: 1; height: 6px; background: #222; border: 1px solid #000; overflow: hidden; }
+.b-exp-fill { height: 100%; background: var(--cyan); transition: width .8s ease; }
+
+/* 스프라이트 위치 */
+.b-sprite-enemy {
+  position: absolute; top: 14px; right: 52px;
+  image-rendering: pixelated;
+  animation: b-idle 2.2s ease-in-out infinite;
+}
+.b-sprite-player {
+  position: absolute; bottom: 22px; left: 36px;
+  image-rendering: pixelated;
+}
+.b-plat-enemy {
+  position: absolute; top: 108px; right: 38px;
+  width: 110px; height: 20px;
+  background: rgba(0,0,0,.18); border-radius: 50%;
+}
+.b-plat-player {
+  position: absolute; bottom: 8px; left: 24px;
+  width: 110px; height: 20px;
+  background: rgba(0,0,0,.18); border-radius: 50%;
+}
+@keyframes b-idle { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+/* 하단 패널 */
+.battle-panel {
+  background: var(--panel);
+  border-top: 3px solid var(--border);
+  flex-shrink: 0;
+}
+
+.b-dialog {
+  padding: 16px 20px;
+  min-height: 76px;
+  display: flex; align-items: center;
+}
+.b-dialog-text { color: var(--cream); font-size: 17px; line-height: 1.55; }
+
+.b-choices { display: none; }
+.b-choices.show { display: block; }
+
+.b-choices-q {
+  padding: 12px 20px 10px;
+  color: var(--cream); font-size: 16px;
+  border-top: 2px solid #2a2a3a;
+}
+
+.b-choices-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-top: 2px solid #2a2a3a;
+}
+.b-choice-btn {
+  padding: 16px 12px;
+  background: transparent;
+  border: none; border-right: 2px solid #2a2a3a; border-bottom: 2px solid #2a2a3a;
+  color: var(--cream); font-family: var(--px); font-size: 14px;
+  cursor: pointer; text-align: left;
+  display: flex; align-items: flex-start; gap: 6px;
+  transition: background .1s; line-height: 1.35;
+}
+.b-choice-btn:nth-child(2n) { border-right: none; }
+.b-choice-btn:nth-last-child(-n+2) { border-bottom: none; }
+.b-choice-btn:hover, .b-choice-btn:active { background: #2a2a44; }
+.b-choice-btn .arr { color: var(--gold); flex-shrink: 0; padding-top: 1px; }
+.b-choice-btn .choice-label { font-size: 15px; }
+.b-choice-btn.correct { border-color: var(--green) !important; }
+.b-choice-btn.wrong { border-color: var(--red) !important; opacity: .7; }
+.b-choice-btn:disabled { cursor: default; }
+.choice-result-label{margin-left:auto;flex-shrink:0;padding:2px 6px;border:1px solid currentColor;font-size:12px;line-height:1.2;}
+.choice-result-label.result-correct{color:var(--green);}
+.choice-result-label.result-wrong{color:#ff7878;}
+.time-bonus-chip,.time-bonus-popup{color:#fff!important;text-shadow:1px 1px 0 #000;}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;}
+
+/* ──────────────────────
+   역사 해설 SCREEN
+────────────────────── */
+#explain-screen {
+  background: var(--bg);
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.explain-header {
+  padding: 18px 20px 12px;
+  border-bottom: 3px solid var(--border);
+  background: var(--panel);
+  flex-shrink: 0;
+}
+.explain-result-badge {
+  display: inline-block;
+  padding: 5px 14px; margin-bottom: 10px;
+  font-size: 14px; font-weight: bold;
+}
+.explain-result-badge.correct { background: #144a14; border: 2px solid var(--green); color: var(--green); }
+.explain-result-badge.wrong { background: #4a1414; border: 2px solid var(--red); color: var(--red); }
+
+.explain-policy-name {
+  color: var(--gold); font-size: 20px;
+  text-shadow: 2px 2px 0 #000;
+  margin-bottom: 6px;
+}
+.explain-chosen {
+  color: #aaa; font-size: 13px;
+}
+.explain-chosen span { color: var(--cream); }
+
+.explain-body { padding: 20px; flex: 1; }
+
+.explain-section { margin-bottom: 22px; }
+.explain-section-title {
+  color: var(--gold); font-size: 14px;
+  border-left: 4px solid var(--gold);
+  padding-left: 10px; margin-bottom: 10px;
+}
+.explain-text {
+  color: var(--cream); font-size: 15px;
+  line-height: 1.8;
+  background: #101020; border: 2px solid #2a2a3a;
+  padding: 14px 16px;
+}
+.explain-text b { color: var(--gold); }
+
+.explain-answer-box {
+  background: #0a1a0a; border: 2px solid var(--green);
+  padding: 14px 16px; margin-bottom: 12px;
+}
+.explain-answer-title { color: var(--green); font-size: 13px; margin-bottom: 6px; }
+.explain-answer-text { color: var(--cream); font-size: 15px; line-height: 1.7; }
+
+.explain-wrong-box {
+  background: #1a0a0a; border: 2px solid #663333;
+  padding: 12px 16px; margin-bottom: 8px;
+}
+.explain-wrong-title { color: #cc6666; font-size: 12px; margin-bottom: 5px; }
+.explain-wrong-text { color: #aaa; font-size: 14px; line-height: 1.6; }
+
+.explain-stat-gained {
+  background: #101028; border: 2px solid var(--border);
+  padding: 12px 16px; margin-bottom: 20px;
+  display: flex; gap: 16px;
+}
+.stat-chip { text-align: center; }
+.stat-chip-lbl { color: #666; font-size:12px; }
+.stat-chip-val { font-size: 16px; font-weight: bold; }
+.stat-chip-val.pos { color: var(--green); }
+.stat-chip-val.neg { color: var(--red); }
+.stat-chip-val.neu { color: #888; }
+
+.btn-explain-continue {
+  width: calc(100% - 40px); margin: 0 20px 20px;
+  padding: 16px; background: #1a3a8a; border: 3px solid var(--blue);
+  color: var(--cream); font-family: var(--px); font-size: 16px;
+  cursor: pointer; box-shadow: 0 4px 0 #0a1a50;
+  transition: all .1s; flex-shrink: 0;
+}
+.btn-explain-continue:active { transform: translateY(2px); box-shadow: 0 2px 0 #0a1a50; }
+
+/* ──────────────────────
+   LEVEL UP SCREEN
+────────────────────── */
+#levelup-screen {
+  background: var(--panel);
+  justify-content: center; align-items: center;
+  padding: 24px 20px;
+}
+.lu-flash { position: absolute; inset: 0; background: #fff; animation: luflash .5s forwards; pointer-events:none; }
+@keyframes luflash { 0%{opacity:1} 100%{opacity:0} }
+
+.lu-box {
+  background: #0a0a1e; border: 4px solid var(--gold);
+  padding: 28px 22px; width: 100%;
+  box-shadow: 6px 6px 0 #000;
+}
+.lu-title { color: var(--gold); font-size: 20px; text-align: center; margin-bottom: 16px; text-shadow: 2px 2px 0 #000; }
+.lu-sprite-row { text-align: center; margin-bottom: 14px; }
+.lu-name { color: var(--cream); font-size: 17px; text-align: center; margin-bottom: 4px; }
+.lu-title-text { color: var(--gold); font-size: 14px; text-align: center; margin-bottom: 16px; }
+.lu-stats { background: #040410; border: 2px solid #222; padding: 14px; margin-bottom: 18px; }
+.lu-stat-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1a1a2a; font-size: 14px; }
+.lu-stat-row:last-child { border: none; }
+.lu-stat-k { color: #888; }
+.lu-stat-v { color: var(--green); }
+
+.btn-lu-cont {
+  width: 100%; padding: 14px;
+  background: #1a5a1a; border: 3px solid var(--green);
+  color: var(--cream); font-family: var(--px); font-size: 15px;
+  cursor: pointer; box-shadow: 0 3px 0 #0a300a; transition: all .1s;
+}
+.btn-lu-cont:active { transform: translateY(1px); box-shadow: 0 1px 0 #0a300a; }
+
+/* ──────────────────────
+   LEADERBOARD SCREEN
+────────────────────── */
+#leaderboard-screen {
+  background: var(--panel);
+  padding: 18px; gap: 10px;
+  overflow-y: auto;
+}
+.lb-h1 { color: var(--gold); font-size: 20px; text-align: center; text-shadow: 2px 2px 0 #000; }
+.lb-sub { color: #666; font-size: 12px; text-align: center; }
+.lb-row {
+  display: flex; align-items: center; gap: 12px;
+  background: #101020; border: 3px solid #333;
+  padding: 14px 16px;
+}
+.lb-row.r1 { border-color: var(--gold); }
+.lb-row.r2 { border-color: #aaa; }
+.lb-row.r3 { border-color: #c07030; }
+.lb-row.me { border-color: var(--blue); }
+.lb-medal { font-size: 22px; min-width: 32px; text-align: center; }
+.lb-team-ico { font-size: 26px; }
+.lb-team-info { flex: 1; }
+.lb-team-name { color: var(--cream); font-size: 14px; }
+.lb-sbar { height: 6px; background: #1a1a2a; margin-top: 5px; overflow: hidden; }
+.lb-sbar-fill { height: 100%; background: var(--gold); transition: width 1s; }
+.lb-pts { color: var(--gold); font-size: 17px; font-weight: bold; }
+.btn-lb-back {
+  padding: 14px; background: #101028; border: 3px solid var(--blue);
+  color: var(--cream); font-family: var(--px); font-size: 14px;
+  cursor: pointer; margin-top: 4px; width: 100%;
+}
+
+/* ──────────────────────
+   FINAL SCREEN
+────────────────────── */
+#final-screen {
+  background: var(--panel);
+  justify-content: center; align-items: center;
+  padding: 20px; overflow-y: auto;
+}
+.final-box {
+  background: #040410; border: 4px solid var(--gold);
+  padding: 26px 22px; width: 100%;
+  box-shadow: 6px 6px 0 #000; text-align: center;
+}
+.final-trophy { font-size: 80px; display: block; margin-bottom: 14px; animation: b-idle 2s infinite; }
+.final-title { color: var(--gold); font-size: 20px; text-shadow: 2px 2px 0 #000; margin-bottom: 18px; }
+.final-grade { background: #0a0a1a; border: 2px solid #2a2a3a; padding: 14px; margin-bottom: 16px; }
+.fgrade-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #1a1a2a; font-size: 14px; }
+.fgrade-row:last-child { border: none; }
+.fgrade-k { color: #888; }
+.fgrade-v { color: var(--cream); }
+.fgrade-v.gold { color: var(--gold); }
+.fgrade-v.grn { color: var(--green); }
+.final-msg { color: #888; font-size: 13px; line-height: 1.7; margin-bottom: 18px; }
+.btn-final-restart {
+  width: 100%; padding: 14px;
+  background: #1a3a8a; border: 3px solid var(--blue);
+  color: var(--cream); font-family: var(--px); font-size: 16px;
+  cursor: pointer; box-shadow: 0 4px 0 #0a1a50; transition: all .1s;
+}
+.btn-final-restart:active { transform: translateY(2px); box-shadow: 0 2px 0 #0a1a50; }
+
+/* ──────────────────────
+   닉네임 화면
+────────────────────── */
+#nickname-screen {
+  background: linear-gradient(180deg, #3a5a8a 0%, #5a80b0 48%, #3a5a28 48%, #1e3a10 100%);
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.nick-panel {
+  width: 100%;
+  background: #12122a;
+  border-top: 4px solid #f8d030;
+  padding: 20px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nick-title {
+  color: #f8d030;
+  font-size: 22px;
+  text-align: center;
+  text-shadow: 2px 2px 0 #000;
+  line-height: 1.3;
+}
+
+.nick-sub {
+  color: #d0d0f0;
+  font-size: 15px;
+  text-align: center;
+  margin-top: -4px;
+}
+.nick-validation-msg{min-height:18px;color:#8888aa;font-size:12px;line-height:1.5;text-align:left;}
+.nick-validation-msg.ok{color:var(--green);}
+.nick-validation-msg.error{color:#ff7878;}
+
+.nick-input-wrap {
+  display: flex;
+  border: 3px solid #5080f0;
+  background: #08081a;
+}
+.nick-input-wrap:focus-within {
+  border-color: #f8d030;
+}
+
+#nick-input-field {
+  flex: 1;
+  padding: 16px 14px;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-family: var(--px);
+  font-size: 20px;
+  outline: none;
+  -webkit-appearance: none;
+  caret-color: #f8d030;
+  letter-spacing: 2px;
+}
+#nick-input-field::placeholder {
+  color: #44446a;
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.nick-char-count {
+  background: #0a0a20;
+  border-left: 2px solid #2a2a5a;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  min-width: 52px;
+  justify-content: center;
+  color: #8888aa;
+  font-size: 14px;
+}
+#nick-char-count-num {
+  color: #f8d030;
+  font-size: 20px;
+}
+
+.nick-preset-title {
+  color: #8888cc;
+  font-size: 13px;
+  margin-bottom: -4px;
+}
+
+.nick-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.nick-preset-btn {
+  flex: 1;
+  min-width: calc(33% - 5px);
+  padding: 11px 8px;
+  background: #1a1a38;
+  border: 2px solid #38387a;
+  color: #c8c8f0;
+  font-family: var(--px);
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .1s;
+}
+.nick-preset-btn:hover,
+.nick-preset-btn:active {
+  border-color: #f8d030;
+  color: #f8d030;
+  background: #22224a;
+}
+
+.btn-nick-confirm {
+  width: 100%;
+  padding: 17px;
+  background: #1a3a8a;
+  border: 3px solid #5080f0;
+  color: #ffffff;
+  font-family: var(--px);
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #0a1a50;
+  transition: all .1s;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+.btn-nick-confirm:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #0a1a50;
+}
+.btn-nick-confirm:disabled {
+  opacity: .3;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 5px 0 #0a1a50;
+}
+
+/* ──────────────────────
+   minimum touch targets
+────────────────────── */
+button,input{min-height:44px;}
+#teacher-btn,#mute-btn{width:44px!important;height:44px!important;min-width:44px;min-height:44px;}
+.mode-tab,.team-card,.map-tile,.nick-preset-btn{min-height:44px;}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
+  #overlay{transition-duration:.25s!important;}
+}
+
+/* ──────────────────────
+   scrollbar
+────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #333; }
+
+/* ──────────────────────
+   캐릭터 스프라이트 슬롯 (SVG / 이미지 공용)
+────────────────────── */
+.sprite-slot {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sprite-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+.sprite-slot.has-webp {
+  animation: none !important;
+  image-rendering: auto;
+}
+.sprite-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  image-rendering: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+
+/* ══════════════════════════════════════
+   v2.0.5: 포켓몬스터 스타일 전투 화면 & 모바일·태블릿 캐릭터 스케일업
+══════════════════════════════════════ */
+
+/* 1) 모바일·태블릿 반응형 앱 컨테이너 */
+#app {
+  max-width: 480px;
+}
+@media (min-width: 600px) {
+  #app {
+    max-width: min(94vw, 760px);
+    border-left: 3px solid var(--border);
+    border-right: 3px solid var(--border);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.75);
+  }
+}
+
+/* 2) 전 화면 캐릭터 슬롯 반응형 크기 (WebP 투명 여백 보정) */
+.sprite-slot.has-webp {
+  animation: none !important;
+  image-rendering: auto;
+  overflow: visible;
+}
+.sprite-slot.has-webp .sprite-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  image-rendering: auto;
+  filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.35));
+}
+/* 호족이 왕건과 마주보도록 좌우 반전 */
+.sprite-face-left.has-webp .sprite-img {
+  transform: scaleX(-1);
+}
+
+/* 타이틀 · 닉네임 · 조우 · 레벨업 캐릭터 크기 */
+.sprite-title      { width: clamp(128px, 34vw, 160px); height: clamp(160px, 24dvh, 200px); }
+.sprite-nick       { width: clamp(144px, 36vw, 176px); height: clamp(180px, 25dvh, 218px); }
+.sprite-enc-player { width: clamp(156px, 40vw, 198px); height: clamp(195px, 29dvh, 246px); }
+.sprite-enc-enemy  { width: clamp(136px, 34vw, 172px); height: clamp(170px, 25dvh, 214px); }
+.sprite-levelup    { width: clamp(160px, 40vw, 200px); height: clamp(200px, 28dvh, 248px); margin: 0 auto; }
+
+.title-battle-row {
+  padding: 0 12px 6px;
+  align-items: flex-end;
+}
+.sprite-shadow {
+  width: 92px;
+  height: 14px;
+  margin-top: -10px;
+}
+.enc-arena {
+  padding: 0 10px 6px;
+}
+.enc-platform {
+  width: 124px;
+  height: 24px;
+  margin-top: -12px;
+  background: radial-gradient(ellipse at center, rgba(130, 175, 85, 0.75) 0%, rgba(55, 90, 30, 0.85) 68%, rgba(0, 0, 0, 0.35) 100%);
+  border: 2px solid rgba(220, 245, 170, 0.45);
+}
+
+/* 3) 포켓몬스터 스타일 전투 무대 (배경 · 원근 발판 · 캐릭터) */
+#battle-screen {
+  background: #0a0a14;
+}
+.battle-stage {
+  flex: 1 1 auto;
+  min-height: 300px;
+  position: relative;
+  overflow: hidden;
+  /* 포켓몬 스타일 하늘 → 원경 지평선 → 잔디 필드 그라데이션 */
+  background:
+    radial-gradient(ellipse 120% 24% at 50% 47%, rgba(255, 255, 240, 0.35) 0%, transparent 70%),
+    linear-gradient(
+      180deg,
+      #5c88c4 0%,
+      #8cb6de 28%,
+      #c8e0f0 45%,
+      #6ca844 45.5%,
+      #559130 56%,
+      #3f7322 76%,
+      #2b5216 100%
+    );
+}
+/* 지평선 경계선 및 원경 잔디 결 */
+.battle-stage::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 44.5%;
+  height: 8px;
+  background: linear-gradient(180deg, rgba(42, 74, 34, 0.45), rgba(140, 198, 92, 0.35));
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 포켓몬식 입체 타원 배틀 패드 */
+.b-plat-enemy {
+  position: absolute;
+  top: 47%;
+  right: 4%;
+  width: clamp(148px, 42%, 250px);
+  height: clamp(32px, 5.2dvh, 48px);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 45%, #8ec860 0%, #68a43e 58%, #477826 100%);
+  border: 3px solid rgba(220, 246, 178, 0.65);
+  box-shadow: 0 5px 0 rgba(24, 48, 12, 0.55), inset 0 4px 8px rgba(0, 0, 0, 0.18);
+  z-index: 2;
+}
+.b-plat-player {
+  position: absolute;
+  bottom: 2%;
+  left: 1%;
+  width: clamp(180px, 52%, 310px);
+  height: clamp(40px, 6.4dvh, 60px);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 45%, #84be56 0%, #5c9834 58%, #3c6c1e 100%);
+  border: 3px solid rgba(214, 242, 168, 0.6);
+  box-shadow: 0 6px 0 rgba(18, 38, 10, 0.6), inset 0 5px 10px rgba(0, 0, 0, 0.2);
+  z-index: 3;
+}
+
+/* 원경 호족 (우측 상단 — 발끝이 적 배틀 패드 중앙에 안착) */
+.b-sprite-enemy {
+  position: absolute;
+  top: auto;
+  bottom: 48%;
+  right: 5%;
+  width: clamp(140px, 36vw, 192px);
+  height: clamp(180px, 26dvh, 242px);
+  z-index: 3;
+}
+
+/* 전경 왕건 (좌측 하단 — 호족보다 크게, 발끝이 아군 패드 중앙에 안착) */
+.b-sprite-player {
+  position: absolute;
+  bottom: 4.5%;
+  left: 3%;
+  width: clamp(168px, 44vw, 228px);
+  height: clamp(216px, 31dvh, 286px);
+  z-index: 4;
+}
+
+/* 4) 포켓몬스터 스타일 HUD 플레이트 (레트로 남색·금색 정체성 유지) */
+.b-hud-enemy,
+.b-hud-player {
+  z-index: 6;
+  background: rgba(20, 22, 40, 0.94);
+  border: 3px solid var(--gold);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.82);
+  padding: 8px 12px;
+}
+/* 적 HUD — 좌측 상단 */
+.b-hud-enemy {
+  top: 10px;
+  left: 10px;
+  min-width: 0;
+  width: clamp(172px, 50%, 270px);
+  border-radius: 6px 14px 6px 14px;
+  border-bottom-width: 5px;
+}
+/* 플레이어 HUD — 우측 하단 */
+.b-hud-player {
+  bottom: 10px;
+  right: 10px;
+  min-width: 0;
+  width: clamp(180px, 51%, 280px);
+  border-radius: 14px 6px 14px 6px;
+  border-bottom-width: 5px;
+}
+
+.b-hud-name-row {
+  gap: 6px;
+  margin-bottom: 5px;
+}
+.b-hud-name {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.b-hud-lv {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.b-hp-row {
+  gap: 6px;
+  margin-bottom: 3px;
+  background: #0d0e1a;
+  padding: 3px 5px;
+  border-radius: 999px;
+  border: 1px solid #3c3e64;
+}
+.b-hp-lbl {
+  color: var(--gold);
+  font-size: 11px;
+  min-width: 22px;
+  text-align: center;
+}
+.b-hp-bg {
+  height: 9px;
+  border-radius: 999px;
+  border: 1px solid #000;
+}
+.b-hp-fill {
+  border-radius: 999px;
+}
+.b-hp-num {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.b-exp-bg {
+  height: 6px;
+  border-radius: 999px;
+}
+.b-exp-fill {
+  border-radius: 999px;
+}
+
+/* 5) 하단 커맨드 프레임 (포켓몬스터 이중 테두리 + 모바일 공간 확보) */
+.b-timer-wrap {
+  height: 6px;
+  background: #0a0a14;
+  border-top: 2px solid #000;
+  flex-shrink: 0;
+}
+.b-timer-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--gold));
+  transition: width 0.1s linear;
+}
+.battle-panel {
+  background: var(--panel);
+  border-top: 4px solid var(--gold);
+  box-shadow: inset 0 3px 0 #0a0a14;
+  flex-shrink: 0;
+}
+.b-dialog {
+  padding: 14px 18px;
+  min-height: 78px;
+}
+.b-dialog-text {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.b-choices-q {
+  padding: 9px 14px 8px;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--gold);
+  background: #121224;
+  border-top: none;
+  border-bottom: 2px solid #2e2e4a;
+}
+.b-choices-grid {
+  border-top: none;
+  background: #18182c;
+}
+.b-choice-btn {
+  padding: 10px 10px;
+  min-height: 54px;
+  font-size: 13px;
+  line-height: 1.28;
+}
+.b-choice-btn .choice-label {
+  font-size: 14px;
+}
+.b-choice-btn .choice-label small {
+  font-size: 11px !important;
+  color: #a8b0cc !important;
+}
+
+/* 6) 태블릿 최적화 (600px 이상: 캐릭터 추가 확대 + 포켓몬식 좌/우 분할 커맨드 창) */
+@media (min-width: 600px) {
+  .sprite-title      { width: 188px; height: 238px; }
+  .sprite-nick       { width: 204px; height: 252px; }
+  .sprite-enc-player { width: 224px; height: 278px; }
+  .sprite-enc-enemy  { width: 194px; height: 242px; }
+  .sprite-levelup    { width: 220px; height: 272px; }
+
+  .battle-stage {
+    min-height: 380px;
+  }
+  .b-plat-enemy {
+    top: 49%;
+    right: 6%;
+    width: clamp(210px, 38%, 290px);
+    height: 48px;
+  }
+  .b-plat-player {
+    bottom: 2.5%;
+    left: 3%;
+    width: clamp(250px, 46%, 350px);
+    height: 58px;
+  }
+  .b-sprite-enemy {
+    bottom: 46%;
+    right: 7.5%;
+    width: clamp(195px, 28vw, 255px);
+    height: clamp(240px, 30dvh, 305px);
+  }
+  .b-sprite-player {
+    bottom: 5%;
+    left: 5%;
+    width: clamp(235px, 34vw, 310px);
+    height: clamp(290px, 36dvh, 370px);
+  }
+
+  .b-hud-enemy  { top: 18px; left: 18px; width: 275px; padding: 11px 16px; }
+  .b-hud-player { bottom: 18px; right: 18px; width: 290px; padding: 11px 16px; }
+  .b-hud-name   { font-size: 17px; }
+  .b-hud-lv     { font-size: 14px; }
+  .b-hp-bg      { height: 11px; }
+
+  /* 태블릿 포켓몬식 하단 분할: 좌측 질문창 + 우측 2×2 선택지 */
+  .b-choices.show {
+    display: grid;
+    grid-template-columns: 38% 62%;
+    align-items: stretch;
+  }
+  .b-choices-q {
+    display: flex;
+    align-items: center;
+    padding: 16px 18px;
+    font-size: 16px;
+    line-height: 1.5;
+    border-bottom: none;
+    border-right: 3px solid var(--gold);
+  }
+  .b-choice-btn {
+    padding: 14px 14px;
+    min-height: 68px;
+  }
+  .b-choice-btn .choice-label {
+    font-size: 15px;
+  }
+  .b-choice-btn .choice-label small {
+    font-size: 12px !important;
+  }
+}
+
+/* 초소형 모바일(세로 700px 이하)에서도 무대와 선택지가 겹치지 않도록 보호 */
+@media (max-height: 700px) and (max-width: 599px) {
+  .battle-stage { min-height: 250px; }
+  .b-sprite-player { width: 152px; height: 192px; bottom: 3%; }
+  .b-sprite-enemy  { width: 128px; height: 162px; bottom: 48%; }
+  .b-choice-btn    { padding: 8px 8px; min-height: 46px; }
+}
+
+/* ══════════════════════════════════════
+   v2.0.7: 로비 화면 레이아웃·비율·스케일업 (로비 전용)
+   - 기존 .screen / .screen.active 전환 규칙을 보존하기 위해
+     #title-screen에 display를 직접 지정하지 않음
+══════════════════════════════════════ */
+#title-screen {
+  position: relative;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  background: #0d1530;
+  overflow: hidden;
+  padding: 0;
+}
+
+#title-screen .title-bg-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 1) 최상단 15% 타이틀 배너 */
+#title-screen .title-logo-box {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 15%;
+  min-height: clamp(96px, 15dvh, 176px);
+  width: 100%;
+  margin: 0;
+  padding: 6px 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  background-color: #12162b;
+  background-image:
+    linear-gradient(var(--gold), var(--gold)),
+    linear-gradient(var(--gold), var(--gold)),
+    linear-gradient(var(--gold), var(--gold)),
+    linear-gradient(var(--gold), var(--gold)),
+    linear-gradient(180deg, #1f274c 0%, #111528 100%);
+  background-size:
+    6px 6px,
+    6px 6px,
+    6px 6px,
+    6px 6px,
+    100% 100%;
+  background-position:
+    8px 8px,
+    calc(100% - 8px) 8px,
+    8px calc(100% - 8px),
+    calc(100% - 8px) calc(100% - 8px),
+    0 0;
+  background-repeat: no-repeat;
+  border: 3px solid var(--gold);
+  box-shadow:
+    inset 0 0 0 2px var(--gold-dk),
+    0 6px 0 #070914,
+    0 12px 24px rgba(0, 0, 0, 0.5);
+}
+
+#title-screen .title-ribbon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 2px 12px;
+  font-size: clamp(10.5px, 2.4vw, 15px);
+  letter-spacing: 0.06em;
+  color: #1a1204;
+  font-weight: 700;
+  background: linear-gradient(180deg, #ffe578 0%, var(--gold) 100%);
+  border: 2px solid var(--gold-dk);
+  box-shadow: 0 2px 0 #0a0c18;
+}
+
+#title-screen .title-crown {
+  font-size: clamp(12px, 2.8vw, 16px);
+  line-height: 1;
+}
+
+#title-screen .title-logo-box h1 {
+  margin: 0;
+  font-size: clamp(28px, 7.6vw, 50px);
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--gold);
+  letter-spacing: 0.03em;
+  text-shadow:
+    3px 3px 0 #080814,
+    -1px -1px 0 #7a5400,
+    0 0 14px rgba(248, 208, 48, 0.32);
+}
+
+#title-screen .title-logo-box p {
+  margin: 0;
+  font-size: clamp(12px, 2.8vw, 18px);
+  color: var(--cream);
+  line-height: 1.25;
+  white-space: nowrap;
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* 2) 중앙 대치 무대 (왕건 Lv.1 vs 호족 2배 확대) */
+#title-screen .title-hero {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 4px 10px;
+}
+
+#title-screen .title-battle-row {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  justify-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+#title-screen .title-sprite-block {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: visible;
+}
+
+#title-screen .title-sprite-block--player {
+  transform: translateX(-3%);
+}
+
+#title-screen .title-sprite-block--enemy {
+  transform: translateX(3%);
+}
+
+#title-screen .title-stage-unit {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: visible;
+}
+
+/* 높이 기준 2배 확대 + 왕건·호족 동일 신장 비율 유지 */
+#title-screen .sprite-title {
+  position: relative;
+  z-index: 2;
+  width: auto;
+  height: clamp(250px, min(43dvh, 78vw), 370px);
+  overflow: visible;
+  filter: drop-shadow(0 6px 0 rgba(0, 0, 0, 0.38));
+}
+
+#title-screen .sprite-title.has-webp .sprite-img {
+  width: auto;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+/* 원근 타원 아레나 발판 (2배 캐릭터 비례 확대) */
+#title-screen .title-platform {
+  position: relative;
+  z-index: 0;
+  width: clamp(160px, 44vw, 240px);
+  max-width: none;
+  height: clamp(30px, 3.8dvh, 42px);
+  margin-top: clamp(-32px, -3.8dvh, -22px);
+  border-radius: 50%;
+  border: 3px solid #233814;
+  background: radial-gradient(ellipse at 50% 38%, #83ab48 0%, #587c31 62%, #3d5a20 100%);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.22),
+    0 5px 0 #1b2c10,
+    0 8px 12px rgba(0, 0, 0, 0.42);
+}
+
+#title-screen .title-platform--enemy {
+  background: radial-gradient(ellipse at 50% 38%, #7b9644 0%, #546c2e 62%, #394d1e 100%);
+}
+
+/* 발판 위 밀착 그림자 */
+#title-screen .sprite-shadow {
+  position: absolute;
+  bottom: clamp(8px, 1dvh, 13px);
+  left: 0;
+  right: 0;
+  z-index: 1;
+  width: 62%;
+  height: clamp(13px, 1.6dvh, 18px);
+  margin: 0 auto;
+  border-radius: 50%;
+  background: rgba(8, 10, 18, 0.58);
+}
+
+/* 중앙 VS 픽셀 배지 (2배 확대) */
+#title-screen .title-vs {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  margin: 0;
+  min-width: clamp(86px, 24vw, 118px);
+  padding: clamp(10px, 2.2vw, 14px) clamp(14px, 3.4vw, 22px);
+  text-align: center;
+  font-size: clamp(40px, 11vw, 54px);
+  font-weight: 900;
+  line-height: 1;
+  color: #fff6cf;
+  letter-spacing: 0.04em;
+  background: linear-gradient(180deg, #e03d30 0%, #8c1919 100%);
+  border: 4px solid var(--gold);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.3),
+    0 6px 0 #0a0a14,
+    0 0 22px rgba(248, 208, 48, 0.48);
+  text-shadow: 3px 3px 0 #3a0808;
+  pointer-events: none;
+}
+
+/* RPG 네임플레이트 */
+#title-screen .title-sprite-label {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: clamp(104px, 27vw, 152px);
+  padding: 6px 14px 7px;
+  background: rgba(14, 18, 36, 0.94);
+  border: 2px solid var(--gold-dk);
+  box-shadow: 0 3px 0 #080a14;
+  text-shadow: none;
+  line-height: 1.2;
+}
+
+#title-screen .title-sprite-label--player {
+  border-color: var(--gold);
+}
+
+#title-screen .title-sprite-label--enemy {
+  border-color: #c85848;
+}
+
+#title-screen .title-role-tag {
+  font-size: clamp(11px, 2.4vw, 14px);
+  color: #c2cce4;
+  letter-spacing: 0.02em;
+}
+
+#title-screen .title-char-name {
+  margin-top: 2px;
+  font-size: clamp(16px, 3.8vw, 22px);
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* 3) 하단 모드 선택 + 황금 CTA 패널 (여백 제거·풀폭·폰트 확대) */
+#title-screen .title-bottom {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 12px 10px max(12px, env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(20, 24, 46, 0.97) 0%, rgba(11, 13, 26, 1) 100%);
+  border-top: 3px solid var(--gold);
+  box-shadow:
+    inset 0 2px 0 var(--gold-dk),
+    0 -8px 20px rgba(0, 0, 0, 0.48);
+}
+
+#title-screen .title-bottom-inner {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+#title-screen .title-bottom p {
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: clamp(16px, 3.8vw, 24px);
+  font-weight: 700;
+  color: var(--cream);
+  text-shadow: 2px 2px 0 #000;
+}
+
+#title-screen .mode-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+#title-screen .mode-tab {
+  min-height: clamp(54px, 7.2dvh, 76px);
+  padding: 10px 4px;
+  font-family: var(--px);
+  font-size: clamp(20px, 4.6vw, 30px);
+  font-weight: 700;
+  white-space: nowrap;
+  color: #cbd2eb;
+  background: #171c36;
+  border: 3px solid #525b88;
+  box-shadow: 0 4px 0 #090b16;
+  cursor: pointer;
+  transition: transform 0.08s ease, background-color 0.12s ease, border-color 0.12s ease;
+}
+
+#title-screen .mode-tab:hover {
+  background: #202950;
+  border-color: #7c89c4;
+  color: #ffffff;
+}
+
+#title-screen .mode-tab.on {
+  background: linear-gradient(180deg, #274c8f 0%, #173062 100%);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 4px 0 #090b16;
+}
+
+#title-screen .mode-tab:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #090b16;
+}
+
+/* 핵심 시작 버튼 (풀폭 황금 CTA) */
+#title-screen .btn-start {
+  width: 100%;
+  min-height: clamp(60px, 8.2dvh, 84px);
+  padding: 12px 10px;
+  font-family: var(--px);
+  font-size: clamp(24px, 5.8vw, 36px);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #1c1202;
+  background: linear-gradient(180deg, #ffe982 0%, var(--gold) 52%, #d89f12 100%);
+  border: 3px solid #fff3b5;
+  box-shadow:
+    0 0 0 2px #5c3e00,
+    0 6px 0 #6e4b00,
+    0 10px 18px rgba(0, 0, 0, 0.48);
+  cursor: pointer;
+  transition: transform 0.08s ease, filter 0.12s ease;
+}
+
+#title-screen .btn-start:hover {
+  filter: brightness(1.06);
+}
+
+#title-screen .btn-start:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 0 0 2px #5c3e00,
+    0 3px 0 #6e4b00,
+    0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* 키보드 포커스 접근성 */
+#title-screen .mode-tab:focus-visible,
+#title-screen .btn-start:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* 600px+ 태블릿·데스크톱 2배 스케일 최적화 */
+@media (min-width: 600px) {
+  #title-screen .title-logo-box {
+    flex: 0 0 15%;
+    min-height: clamp(130px, 15dvh, 195px);
+    padding: 10px 64px;
+    gap: 6px;
+  }
+
+  #title-screen .title-logo-box h1 {
+    font-size: clamp(40px, 6.8vw, 52px);
+  }
+
+  #title-screen .title-hero {
+    padding: 0 8px 14px;
+  }
+
+  #title-screen .sprite-title {
+    height: clamp(380px, min(46dvh, 76vw), 480px);
+  }
+
+  #title-screen .title-platform {
+    width: clamp(230px, 38vw, 290px);
+    height: 44px;
+    margin-top: -36px;
+  }
+
+  #title-screen .title-vs {
+    min-width: 132px;
+    padding: 14px 24px;
+    font-size: clamp(54px, 8.8vw, 66px);
+    border-width: 5px;
+  }
+
+  #title-screen .title-bottom {
+    padding: 14px 12px 14px;
+  }
+
+  #title-screen .mode-tabs {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+}
+
+/* 초소형 세로 모바일(세로 700px 이하) 보호 */
+@media (max-height: 700px) and (max-width: 599px) {
+  #title-screen .title-logo-box {
+    min-height: 90px;
+    padding: 4px 50px;
+    gap: 2px;
+  }
+
+  #title-screen .title-logo-box h1 {
+    font-size: 26px;
+  }
+
+  #title-screen .sprite-title {
+    height: clamp(210px, min(40dvh, 70vw), 270px);
+  }
+
+  #title-screen .title-vs {
+    font-size: 36px;
+    min-width: 78px;
+    padding: 8px 12px;
+  }
+
+  #title-screen .title-bottom {
+    padding: 8px 8px 10px;
+  }
+
+  #title-screen .mode-tab {
+    min-height: 48px;
+    font-size: 18px;
+  }
+
+  #title-screen .btn-start {
+    min-height: 54px;
+    font-size: 22px;
+  }
+}
+
+/* 모션 축소 환경 대응 */
+@media (prefers-reduced-motion: reduce) {
+  #title-screen .mode-tab,
+  #title-screen .btn-start {
+    transition: none;
+  }
+}
+
+/* ══════════════════════════════════════
+   v2.0.8: 닉네임 화면 레이아웃·비율·스케일업 (닉네임 화면 전용)
+   - 상단 배너가 없는 구조와 빠른 선택 제거를 반영해
+     상단 무대(왕건·물음표·VS)와 하단 입력 패널 비율을 여백 없이 재설계
+   - 기존 .screen / .screen.active 전환 규칙을 보존하기 위해
+     #nickname-screen에 display를 직접 지정하지 않음
+══════════════════════════════════════ */
+#nickname-screen {
+  position: relative;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  background: #0d1530;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0;
+}
+
+#nickname-screen .nick-bg-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 1) 상단 대결 무대 (화면의 약 62~66% 점유, 상단 여백 균형 배치) */
+#nickname-screen .nick-stage {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(28px, 4.5dvh, 52px) 4px clamp(12px, 2dvh, 22px);
+}
+
+#nickname-screen .nick-battle-row {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  justify-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+#nickname-screen .nick-sprite-block {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 1.2dvh, 12px);
+  min-width: 0;
+  overflow: visible;
+}
+
+#nickname-screen .nick-sprite-block--player {
+  transform: translateX(-3%);
+}
+
+#nickname-screen .nick-sprite-block--enemy {
+  transform: translateX(3%);
+}
+
+#nickname-screen .nick-stage-unit {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: visible;
+}
+
+/* 왕건(Lv.1) 대형 스케일 (상단 배너 없음 → 로비보다 더 여유 있게 확대) */
+#nickname-screen .sprite-nick {
+  position: relative;
+  z-index: 2;
+  width: auto;
+  height: clamp(270px, min(50dvh, 88vw), 430px);
+  overflow: visible;
+  filter: drop-shadow(0 6px 0 rgba(0, 0, 0, 0.4));
+}
+
+#nickname-screen .sprite-nick.has-webp .sprite-img {
+  width: auto;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+/* 상대 호족 물음표 (왕건과 동일한 높이 슬롯 안에서 비례 확대) */
+#nickname-screen .nick-mystery-slot {
+  position: relative;
+  z-index: 2;
+  height: clamp(270px, min(50dvh, 88vw), 430px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 10%;
+}
+
+#nickname-screen .nick-mystery-svg {
+  height: 70%;
+  width: auto;
+  overflow: visible;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45));
+  animation: b-idle 2.2s ease-in-out infinite;
+  animation-delay: -1s;
+}
+
+/* 원근 타원 아레나 발판 */
+#nickname-screen .nick-platform {
+  position: relative;
+  z-index: 0;
+  width: clamp(168px, 44vw, 256px);
+  height: clamp(32px, 4dvh, 44px);
+  margin-top: clamp(-34px, -4dvh, -22px);
+  border-radius: 50%;
+  border: 3px solid #233814;
+  background: radial-gradient(ellipse at 50% 38%, #83ab48 0%, #587c31 62%, #3d5a20 100%);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.22),
+    0 5px 0 #1b2c10,
+    0 8px 12px rgba(0, 0, 0, 0.42);
+}
+
+#nickname-screen .nick-platform--enemy {
+  background: radial-gradient(ellipse at 50% 38%, #7b9644 0%, #546c2e 62%, #394d1e 100%);
+}
+
+/* 발판 위 밀착 그림자 */
+#nickname-screen .sprite-shadow {
+  position: absolute;
+  bottom: clamp(8px, 1.1dvh, 14px);
+  left: 0;
+  right: 0;
+  z-index: 1;
+  width: 62%;
+  height: clamp(13px, 1.7dvh, 19px);
+  margin: 0 auto;
+  border-radius: 50%;
+  background: rgba(8, 10, 18, 0.58);
+}
+
+/* 중앙 VS 픽셀 배지 (캐릭터 확대 비율에 맞춰 비례 확대) */
+#nickname-screen .nick-vs {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  margin: 0;
+  min-width: clamp(92px, 25vw, 128px);
+  padding: clamp(10px, 2.4vw, 15px) clamp(16px, 3.6vw, 24px);
+  text-align: center;
+  font-size: clamp(44px, 11.5vw, 60px);
+  font-weight: 900;
+  line-height: 1;
+  color: #fff6cf;
+  letter-spacing: 0.04em;
+  background: linear-gradient(180deg, #e03d30 0%, #8c1919 100%);
+  border: 4px solid var(--gold);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.3),
+    0 6px 0 #0a0a14,
+    0 0 24px rgba(248, 208, 48, 0.5);
+  text-shadow: 3px 3px 0 #3a0808;
+  pointer-events: none;
+}
+
+/* RPG 네임플레이트 */
+#nickname-screen .nick-sprite-label {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: clamp(112px, 29vw, 166px);
+  padding: 6px 14px 7px;
+  background: rgba(14, 18, 36, 0.94);
+  border: 2px solid var(--gold-dk);
+  box-shadow: 0 3px 0 #080a14;
+  line-height: 1.2;
+}
+
+#nickname-screen .nick-sprite-label--player {
+  border-color: var(--gold);
+}
+
+#nickname-screen .nick-sprite-label--enemy {
+  border-color: #c85848;
+}
+
+#nickname-screen .nick-role-tag {
+  font-size: clamp(11px, 2.5vw, 14px);
+  color: #c2cce4;
+  letter-spacing: 0.02em;
+}
+
+#nickname-screen .nick-char-name {
+  margin-top: 2px;
+  font-size: clamp(16px, 4vw, 23px);
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* 2) 하단 닉네임 입력 패널 (빠른 선택 제거 → 풀폭·여백 없이 컨트롤 확대 재배치) */
+#nickname-screen .nick-panel {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  width: 100%;
+  padding: clamp(18px, 2.8dvh, 28px) 12px max(16px, env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(20, 24, 46, 0.97) 0%, rgba(11, 13, 26, 1) 100%);
+  border-top: 4px solid var(--gold);
+  box-shadow:
+    inset 0 2px 0 var(--gold-dk),
+    0 -8px 22px rgba(0, 0, 0, 0.5);
+  gap: 0;
+}
+
+#nickname-screen .nick-panel-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.8dvh, 18px);
+}
+
+/* 단독 프롬프트: "닉네임을 쓰세요" */
+#nickname-screen .nick-sub {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(24px, 6vw, 36px);
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  text-shadow: 2px 2px 0 #000;
+}
+
+/* 풀폭 대형 입력창 */
+#nickname-screen .nick-input-wrap {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-height: clamp(60px, 8dvh, 80px);
+  border: 3px solid #5080f0;
+  background: #08081a;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.55);
+}
+
+#nickname-screen .nick-input-wrap:focus-within {
+  border-color: var(--gold);
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.55),
+    0 0 0 2px rgba(248, 208, 48, 0.28);
+}
+
+#nickname-screen #nick-input-field {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  font-size: clamp(22px, 5.4vw, 32px);
+  letter-spacing: 2px;
+}
+
+#nickname-screen #nick-input-field::placeholder {
+  color: #5b638f;
+  font-size: clamp(17px, 4.2vw, 24px);
+  letter-spacing: 0;
+}
+
+#nickname-screen .nick-char-count {
+  min-width: clamp(64px, 16vw, 88px);
+  padding: 0 14px;
+  font-size: clamp(16px, 3.8vw, 22px);
+}
+
+#nickname-screen #nick-char-count-num {
+  font-size: clamp(22px, 5.2vw, 30px);
+  font-weight: 700;
+}
+
+#nickname-screen .nick-validation-msg {
+  margin-top: -4px;
+  min-height: 20px;
+  font-size: clamp(13px, 3.1vw, 17px);
+  line-height: 1.4;
+  text-align: center;
+  color: #a8b2d8;
+}
+
+#nickname-screen .nick-validation-msg.ok {
+  color: var(--green);
+}
+
+#nickname-screen .nick-validation-msg.error {
+  color: #ff7878;
+}
+
+/* 핵심 확인 CTA 버튼 (풀폭 대형) */
+#nickname-screen .btn-nick-confirm {
+  width: 100%;
+  min-height: clamp(62px, 8.6dvh, 88px);
+  padding: 14px 12px;
+  margin-top: 2px;
+  font-family: var(--px);
+  font-size: clamp(24px, 5.8vw, 36px);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #1c1202;
+  background: linear-gradient(180deg, #ffe982 0%, var(--gold) 52%, #d89f12 100%);
+  border: 3px solid #fff3b5;
+  box-shadow:
+    0 0 0 2px #5c3e00,
+    0 6px 0 #6e4b00,
+    0 10px 18px rgba(0, 0, 0, 0.48);
+  transition: transform 0.08s ease, filter 0.12s ease, opacity 0.15s ease;
+}
+
+#nickname-screen .btn-nick-confirm:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+#nickname-screen .btn-nick-confirm:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    0 0 0 2px #5c3e00,
+    0 3px 0 #6e4b00,
+    0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+#nickname-screen .btn-nick-confirm:disabled {
+  opacity: 0.38;
+  filter: grayscale(0.45);
+  box-shadow:
+    0 0 0 2px #3b2a06,
+    0 5px 0 #3f2d08;
+}
+
+#nickname-screen .btn-nick-confirm:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* 600px+ 태블릿·데스크톱 대형 비율 최적화 */
+@media (min-width: 600px) {
+  #nickname-screen .nick-stage {
+    padding: clamp(32px, 4.5dvh, 56px) 10px clamp(16px, 2.2dvh, 26px);
+  }
+
+  #nickname-screen .sprite-nick,
+  #nickname-screen .nick-mystery-slot {
+    height: clamp(420px, min(54dvh, 84vw), 560px);
+  }
+
+  #nickname-screen .nick-platform {
+    width: clamp(238px, 39vw, 308px);
+    height: 48px;
+    margin-top: -38px;
+  }
+
+  #nickname-screen .nick-vs {
+    min-width: 142px;
+    padding: 15px 26px;
+    font-size: clamp(58px, 9.2vw, 72px);
+    border-width: 5px;
+  }
+
+  #nickname-screen .nick-panel {
+    padding: clamp(22px, 3dvh, 32px) 18px clamp(20px, 2.8dvh, 30px);
+  }
+
+  #nickname-screen .nick-panel-inner {
+    gap: clamp(14px, 2dvh, 20px);
+  }
+}
+
+/* 초소형 세로 모바일(세로 700px 이하) 보호 */
+@media (max-height: 700px) and (max-width: 599px) {
+  #nickname-screen .nick-stage {
+    padding: 20px 4px 8px;
+  }
+
+  #nickname-screen .sprite-nick,
+  #nickname-screen .nick-mystery-slot {
+    height: clamp(220px, min(46dvh, 76vw), 300px);
+  }
+
+  #nickname-screen .nick-vs {
+    font-size: 38px;
+    min-width: 82px;
+    padding: 8px 14px;
+  }
+
+  #nickname-screen .nick-panel {
+    padding: 14px 10px 14px;
+  }
+
+  #nickname-screen .nick-panel-inner {
+    gap: 10px;
+  }
+
+  #nickname-screen .nick-sub {
+    font-size: 22px;
+  }
+
+  #nickname-screen .nick-input-wrap {
+    min-height: 54px;
+  }
+
+  #nickname-screen .btn-nick-confirm {
+    min-height: 56px;
+    font-size: 22px;
+  }
+}
+
+/* 모바일 가상 키보드 오픈 시(가시 높이 520px 이하) 입력창·확인버튼 우선 보호 */
+@media (max-height: 520px) {
+  #nickname-screen .nick-stage {
+    padding: 8px 4px 4px;
+  }
+
+  #nickname-screen .sprite-nick,
+  #nickname-screen .nick-mystery-slot {
+    height: 150px;
+  }
+
+  #nickname-screen .nick-vs {
+    font-size: 28px;
+    min-width: 64px;
+    padding: 6px 10px;
+  }
+
+  #nickname-screen .nick-panel {
+    padding: 10px 10px 12px;
+  }
+
+  #nickname-screen .nick-panel-inner {
+    gap: 8px;
+  }
+
+  #nickname-screen .nick-sub {
+    font-size: 18px;
+  }
+
+  #nickname-screen .nick-input-wrap {
+    min-height: 48px;
+  }
+
+  #nickname-screen .btn-nick-confirm {
+    min-height: 50px;
+    font-size: 20px;
+  }
+}
+
+/* 모션 축소 환경 대응 */
+@media (prefers-reduced-motion: reduce) {
+  #nickname-screen .nick-mystery-svg {
+    animation: none;
+  }
+  #nickname-screen .btn-nick-confirm {
+    transition: none;
+  }
+}
+
+/* ══════════════════════════════════════
+   v2.0.9: 지역별 배경 에셋 + 타이틀/닉네임/조우/전투 반투명 발판 조화
+   - 닉네임 화면 및 개경 중신(hunyo): 송악(개경) 이미지 공통 적용
+   - 서경(평양)(seogyeong): 평양(서경) 이미지 분리 적용
+   - 타이틀·닉네임·조우·전투 타원 발판을 스테이지 지면 톤에 맞춘 반투명 스타일로 전환
+══════════════════════════════════════ */
+
+/* 1) 기본 반투명 발판 토큰 */
+:root {
+  --plat-bg-player: radial-gradient(ellipse at 50% 42%,
+    rgba(162, 146, 122, 0.42) 0%,
+    rgba(96, 84, 68, 0.30) 62%,
+    rgba(28, 24, 18, 0.14) 100%);
+  --plat-bg-enemy: radial-gradient(ellipse at 50% 42%,
+    rgba(128, 114, 96, 0.38) 0%,
+    rgba(74, 64, 52, 0.28) 62%,
+    rgba(22, 18, 14, 0.14) 100%);
+  --plat-border: rgba(255, 244, 220, 0.24);
+  --plat-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.14), 0 4px 10px rgba(0, 0, 0, 0.28);
+}
+
+/* 2) 타이틀 화면 발판 — 기존 여명·초원 SVG 배경과 조화되는 반투명 톤 */
+#title-screen .title-platform {
+  background: radial-gradient(ellipse at 50% 42%,
+    rgba(94, 128, 62, 0.40) 0%,
+    rgba(52, 76, 32, 0.32) 64%,
+    rgba(20, 32, 12, 0.18) 100%);
+  border: 2px solid rgba(216, 232, 176, 0.26);
+  box-shadow:
+    inset 0 2px 4px rgba(255, 244, 200, 0.14),
+    0 4px 10px rgba(8, 14, 6, 0.34);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
+}
+
+#title-screen .title-platform--enemy {
+  background: radial-gradient(ellipse at 50% 42%,
+    rgba(84, 114, 56, 0.36) 0%,
+    rgba(46, 68, 28, 0.28) 64%,
+    rgba(18, 28, 10, 0.16) 100%);
+}
+
+/* 3) 닉네임 화면 — 송악(개경) 배경 적용 (기존 불투명 SVG 숨김) */
+#nickname-screen {
+  background-color: #141218;
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(12, 14, 24, 0.22) 0%,
+      rgba(12, 14, 24, 0.08) 44%,
+      rgba(12, 14, 24, 0.42) 100%
+    ),
+    url('../assets/backgrounds/bg_gaegyeong_nick.webp');
+  background-size: cover;
+  background-position: center 48%;
+  background-repeat: no-repeat;
+}
+
+#nickname-screen .nick-bg-scene {
+  display: none;
+}
+
+/* 4) 조우·전투 화면 — 지역별 배경 이미지 적용 */
+#encounter-screen .enc-arena.has-bg-image {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(8, 10, 22, 0.26) 0%,
+      rgba(8, 10, 22, 0) 24%,
+      rgba(8, 10, 22, 0) 74%,
+      rgba(8, 10, 22, 0.30) 100%
+    ),
+    var(--stage-bg-image);
+  background-size: cover;
+  background-position: center 62%;
+  background-repeat: no-repeat;
+}
+
+#battle-screen .battle-stage.has-bg-image {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(8, 10, 22, 0.24) 0%,
+      rgba(8, 10, 22, 0) 26%,
+      rgba(8, 10, 22, 0) 72%,
+      rgba(8, 10, 22, 0.32) 100%
+    ),
+    var(--stage-bg-image),
+    linear-gradient(180deg, #5c88c4 0%, #c8e0f0 45%, #559130 46%, #2b5216 100%);
+  background-size: cover;
+  background-position: center 58%;
+  background-repeat: no-repeat;
+}
+
+/* 이미지 배경 사용 시 기존 CSS 인위적 지평선 띠 숨김 */
+#battle-screen .battle-stage.has-bg-image::before {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  #encounter-screen .enc-arena.has-bg-image {
+    background-position: center 56%;
+  }
+  #battle-screen .battle-stage.has-bg-image {
+    background-position: center 54%;
+  }
+}
+
+/* 5) 닉네임·조우·전투 타원 발판 공통 반투명 구조 (기존 크기·위치 보존) */
+#nickname-screen .nick-platform,
+.enc-platform,
+.b-plat-player {
+  background: var(--plat-bg-player);
+  border: 2px solid var(--plat-border);
+  box-shadow: var(--plat-shadow);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
+}
+
+#nickname-screen .nick-platform--enemy,
+.enc-side.enemy .enc-platform,
+.b-plat-enemy {
+  background: var(--plat-bg-enemy);
+  border: 2px solid var(--plat-border);
+  box-shadow: var(--plat-shadow);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
+}
+
+/* 6) 스테이지별 실제 지면 색상 기반 반투명 발판 팔레트 */
+
+/* 송악(개경) — 닉네임 화면 & 개경 중신(hunyo) */
+#nickname-screen,
+[data-stage="hunyo"] {
+  --plat-bg-player: radial-gradient(ellipse at 50% 42%, rgba(154, 126, 102, 0.42) 0%, rgba(98, 78, 64, 0.30) 64%, rgba(34, 26, 22, 0.14) 100%);
+  --plat-bg-enemy:  radial-gradient(ellipse at 50% 42%, rgba(112, 96, 84, 0.38) 0%, rgba(66, 56, 50, 0.28) 64%, rgba(24, 20, 18, 0.14) 100%);
+  --plat-border: rgba(242, 222, 198, 0.24);
+}
+
+/* 서경(평양) — 청회색 석성·돌바닥 */
+[data-stage="seogyeong"] {
+  --plat-bg-player: radial-gradient(ellipse at 50% 42%, rgba(148, 152, 158, 0.42) 0%, rgba(92, 96, 102, 0.30) 64%, rgba(32, 34, 40, 0.14) 100%);
+  --plat-bg-enemy:  radial-gradient(ellipse at 50% 42%, rgba(108, 110, 114, 0.38) 0%, rgba(64, 66, 70, 0.28) 64%, rgba(24, 26, 30, 0.14) 100%);
+  --plat-border: rgba(220, 232, 242, 0.24);
+}
+
+/* 경주 — 밝은 모래·황토 석단 */
+[data-stage="hoinjeon"] {
+  --plat-bg-player: radial-gradient(ellipse at 50% 42%, rgba(202, 184, 158, 0.38) 0%, rgba(138, 122, 100, 0.28) 64%, rgba(48, 40, 32, 0.12) 100%);
+  --plat-bg-enemy:  radial-gradient(ellipse at 50% 42%, rgba(126, 110, 96, 0.38) 0%, rgba(76, 64, 54, 0.28) 64%, rgba(30, 24, 20, 0.14) 100%);
+  --plat-border: rgba(255, 242, 214, 0.26);
+}
+
+/* 명주 — 따뜻한 황토·목조 */
+[data-stage="saseong"] {
+  --plat-bg-player: radial-gradient(ellipse at 50% 42%, rgba(162, 134, 106, 0.40) 0%, rgba(104, 84, 66, 0.30) 64%, rgba(36, 28, 22, 0.14) 100%);
+  --plat-bg-enemy:  radial-gradient(ellipse at 50% 42%, rgba(110, 96, 84, 0.38) 0%, rgba(64, 56, 50, 0.28) 64%, rgba(24, 20, 18, 0.14) 100%);
+  --plat-border: rgba(244, 226, 200, 0.24);
+}
+
+/* 나주 — 포구 목재·모래 지면 */
+[data-stage="yeokbunjeon"] {
+  --plat-bg-player: radial-gradient(ellipse at 50% 42%, rgba(168, 150, 124, 0.40) 0%, rgba(108, 94, 76, 0.30) 64%, rgba(38, 32, 26, 0.14) 100%);
+  --plat-bg-enemy:  radial-gradient(ellipse at 50% 42%, rgba(122, 112, 98, 0.38) 0%, rgba(74, 68, 58, 0.28) 64%, rgba(28, 24, 20, 0.14) 100%);
+  --plat-border: rgba(236, 232, 218, 0.24);
+}
+
+/* 혜성군 — 노을빛 황토·사암 */
+[data-stage="giin"] {
+  --plat-bg-player: radial-gradient(ellipse at 50% 42%, rgba(192, 158, 106, 0.38) 0%, rgba(132, 104, 66, 0.28) 64%, rgba(48, 36, 20, 0.14) 100%);
+  --plat-bg-enemy:  radial-gradient(ellipse at 50% 42%, rgba(136, 110, 76, 0.38) 0%, rgba(84, 66, 44, 0.28) 64%, rgba(32, 24, 14, 0.14) 100%);
+  --plat-border: rgba(255, 234, 188, 0.26);
+}
+
+/* 전주 — 밝은 흙길·석재 */
+[data-stage="sasiimgwan"] {
+  --plat-bg-player: radial-gradient(ellipse at 50% 42%, rgba(190, 174, 148, 0.38) 0%, rgba(128, 114, 94, 0.28) 64%, rgba(44, 38, 30, 0.12) 100%);
+  --plat-bg-enemy:  radial-gradient(ellipse at 50% 42%, rgba(124, 114, 100, 0.38) 0%, rgba(76, 68, 58, 0.28) 64%, rgba(28, 24, 20, 0.14) 100%);
+  --plat-border: rgba(248, 238, 216, 0.25);
+}
+
+/* 발해 유민촌 — 북방 올리브 초원·흙빛 */
+[data-stage="balhae"] {
+  --plat-bg-player: radial-gradient(ellipse at 50% 42%, rgba(148, 144, 108, 0.40) 0%, rgba(94, 90, 64, 0.30) 64%, rgba(34, 32, 22, 0.14) 100%);
+  --plat-bg-enemy:  radial-gradient(ellipse at 50% 42%, rgba(154, 148, 112, 0.38) 0%, rgba(96, 92, 66, 0.28) 64%, rgba(36, 34, 22, 0.14) 100%);
+  --plat-border: rgba(234, 236, 202, 0.24);
+}
+
+/* ══════════════════════════════════════
+   v2.0.10: EXP 수치 표시 레이아웃 정리
+   v2.0.11: 4:3 아웃페인팅 배경(전 지역 8종 + 닉네임 개경 화면) 구도 정합성 보정
+══════════════════════════════════════ */
+#nickname-screen {
+  background-position: center 54%;
+}
+
+#encounter-screen .enc-arena.has-bg-image {
+  background-position: center 58%;
+}
+
+#battle-screen .battle-stage.has-bg-image {
+  background-position: center 56%;
+}
+
+@media (min-width: 600px) {
+  #nickname-screen {
+    background-position: center 56%;
+  }
+  #encounter-screen .enc-arena.has-bg-image {
+    background-position: center 60%;
+  }
+  #battle-screen .battle-stage.has-bg-image {
+    background-position: center 58%;
+  }
+}
+
+.exp-val {
+  min-width: 82px;
+  white-space: nowrap;
+}
+
+.b-exp-val {
+  color: var(--cyan);
+  font-size: 10px;
+  min-width: 44px;
+  text-align: right;
+  white-space: nowrap;
+  letter-spacing: 0;
+}
+/* ══════════════════════════════════════
+   v2.0.12: 스테이지 배경·캐릭터·HUD 구도 및 비율 정합성 보정
+   - 4:3 배경의 성벽 하단선(y ≈ 55~60%) 아래 광장 바닥에 호족·왕건이 안착하도록 배치
+   - 원근 비율 유지(왕건 > 호족) 및 배경 건축물·HUD 겹침 방지
+══════════════════════════════════════ */
+
+/* 1) 배경 수직 프레이밍 보정 */
+#encounter-screen .enc-arena.has-bg-image {
+  background-position: center 32%;
+}
+#battle-screen .battle-stage.has-bg-image {
+  background-position: center 28%;
+}
+
+@media (min-width: 600px) {
+  #encounter-screen .enc-arena.has-bg-image {
+    background-position: center 34%;
+  }
+  #battle-screen .battle-stage.has-bg-image {
+    background-position: center 30%;
+  }
+}
+
+/* 2) 조우 화면 캐릭터 크기 비율 조정 */
+#encounter-screen .sprite-enc-player {
+  width: clamp(124px, 31vw, 162px);
+  height: clamp(154px, 22dvh, 200px);
+}
+#encounter-screen .sprite-enc-enemy {
+  width: clamp(108px, 27vw, 142px);
+  height: clamp(134px, 19dvh, 176px);
+}
+#encounter-screen .enc-platform {
+  width: clamp(100px, 25vw, 136px);
+  height: 20px;
+}
+
+/* 3) 전투 무대 — 원경 호족을 성벽 아래 광장 바닥(y ≈ 55~75%)에 안착 */
+#battle-screen .b-plat-enemy {
+  top: auto;
+  bottom: 24.5%;
+  right: 7%;
+  width: clamp(118px, 32%, 192px);
+  height: clamp(22px, 3.5dvh, 34px);
+}
+#battle-screen .b-sprite-enemy {
+  top: auto;
+  bottom: 26%;
+  right: 8.5%;
+  width: clamp(102px, 25.5vw, 140px);
+  height: clamp(128px, 18.5dvh, 172px);
+}
+
+/* 4) 전투 무대 — 전경 왕건 비율 및 전면 광장(y ≈ 73~96%) 위치 조정 */
+#battle-screen .b-plat-player {
+  bottom: 2.8%;
+  left: 4%;
+  width: clamp(142px, 40%, 238px);
+  height: clamp(28px, 4.4dvh, 44px);
+}
+#battle-screen .b-sprite-player {
+  bottom: 4.2%;
+  left: 5.5%;
+  width: clamp(124px, 31vw, 168px);
+  height: clamp(156px, 22.5dvh, 208px);
+}
+
+/* 5) 체력·경험치 HUD 슬림화 및 여백 확보 */
+#battle-screen .b-hud-enemy {
+  top: 8px;
+  left: 8px;
+  width: clamp(160px, 45%, 242px);
+  padding: 6px 10px;
+}
+#battle-screen .b-hud-player {
+  bottom: 8px;
+  right: 8px;
+  width: clamp(168px, 47%, 252px);
+  padding: 6px 10px;
+}
+#battle-screen .b-hud-name-row {
+  margin-bottom: 4px;
+}
+#battle-screen .b-hud-name {
+  font-size: 13px;
+}
+#battle-screen .b-hud-lv,
+#battle-screen .b-hp-num {
+  font-size: 11px;
+}
+#battle-screen .b-hp-num {
+  margin-bottom: 3px;
+}
+
+/* ══════════════════════════════════════
+   v2.0.14 배포용 확장 스타일 (수업 코드 · 오프라인 집계 · 교사 설정)
+══════════════════════════════════════ */
+#team-screen {
+  overflow-y: auto;
+  justify-content: flex-start;
+  padding-top: 56px;
+}
+.team-mode-pill {
+  width: 100%;
+  padding: 8px 12px;
+  background: #0d1226;
+  border: 2px solid #304070;
+  color: #b8d0ff;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.5;
+}
+.team-mode-pill.online {
+  border-color: #2f8a4c;
+  background: #0b1f14;
+  color: #8df0a8;
+}
+.team-mode-pill.offline {
+  border-color: #c89d28;
+  background: #1c1708;
+  color: #f8d878;
+}
+.class-code-box {
+  width: 100%;
+  background: #101024;
+  border: 2px solid #3a3a64;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.class-code-label {
+  font-size: 12px;
+  color: var(--gold);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.class-code-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: #050512;
+  border: 2px solid #5060a0;
+  color: var(--cream);
+  font-family: var(--px);
+  font-size: 14px;
+  outline: none;
+}
+.class-code-input:focus {
+  border-color: var(--gold);
+}
+.class-code-hint {
+  font-size: 11px;
+  color: #9098b8;
+  line-height: 1.45;
+}
+.receipt-card {
+  background: #0b1024;
+  border: 3px solid var(--gold);
+  padding: 14px 12px;
+  margin: 12px 0 14px;
+  text-align: left;
+}
+.receipt-card-title {
+  color: var(--gold);
+  font-size: 14px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.receipt-card-sub {
+  color: #c8d0e8;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.receipt-code-box {
+  width: 100%;
+  padding: 10px;
+  background: #04040e;
+  border: 2px solid #3c4672;
+  color: #8df0a8;
+  font-family: monospace;
+  font-size: 12px;
+  word-break: break-all;
+  resize: none;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+.btn-receipt-copy {
+  width: 100%;
+  padding: 12px;
+  background: #1b5e36;
+  border: 3px solid #48d078;
+  color: #fff;
+  font-family: var(--px);
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #0c2e1a;
+}
+.btn-receipt-copy:active { transform: translateY(2px); }
+.receipt-copy-status {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--gold);
+  text-align: center;
+  min-height: 16px;
+}
+#teacher-screen {
+  overflow-y: auto;
+  justify-content: flex-start;
+  padding-top: 24px;
+  padding-bottom: 32px;
+}
+.teacher-input-sm {
+  width: 100%;
+  padding: 9px 10px;
+  background: #050512;
+  border: 2px solid #3a4670;
+  color: var(--cream);
+  font-family: var(--px);
+  font-size: 13px;
+  margin-bottom: 8px;
+  outline: none;
+}
+.teacher-input-sm:focus { border-color: var(--gold); }
+.teacher-textarea {
+  width: 100%;
+  min-height: 92px;
+  padding: 10px;
+  background: #050512;
+  border: 2px solid #3a4670;
+  color: #c8f0d8;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  resize: vertical;
+  outline: none;
+}
+.teacher-textarea:focus { border-color: var(--gold); }
+.btn-teacher-sub {
+  width: 100%;
+  padding: 11px;
+  margin-bottom: 8px;
+  background: #192a5e;
+  border: 2px solid #4f78d8;
+  color: var(--cream);
+  font-family: var(--px);
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #0a1430;
+}
+.btn-teacher-sub.green {
+  background: #154a2c;
+  border-color: #46c878;
+  box-shadow: 0 3px 0 #092616;
+}
+.btn-teacher-sub.muted {
+  background: #222234;
+  border-color: #555570;
+  color: #ccc;
+  box-shadow: 0 3px 0 #111;
+}
+.teacher-note {
+  font-size: 11px;
+  color: #9aa4c2;
+  line-height: 1.55;
+  margin-bottom: 8px;
+}

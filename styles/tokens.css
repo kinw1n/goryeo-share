@@ -1,0 +1,30 @@
+/* ══════════════════════════════════════
+   왕건의 통일 배틀 — 폰트 및 디자인 토큰
+══════════════════════════════════════ */
+@font-face {
+  font-family: 'GriunPol';
+  src: url('../assets/fonts/GriunPol.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg:       #0a0a14;
+  --panel:    #181828;
+  --border:   #3a3a5c;
+  --cream:    #e8e8c8;
+  --gold:     #f8d030;
+  --gold-dk:  #b89000;
+  --green:    #40d040;
+  --red:      #e83030;
+  --blue:     #5080f0;
+  --cyan:     #40c8f8;
+  --sky1:     #7090c0;
+  --sky2:     #a0c0e0;
+  --gnd1:     #507030;
+  --gnd2:     #304818;
+  --sand1:    #c8a050;
+  --sand2:    #906820;
+  --px: 'GriunPol','Noto Sans KR',sans-serif;
+}

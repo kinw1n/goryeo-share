@@ -1,0 +1,2670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>왕건의 통일 배틀</title>
+<link rel="stylesheet" href="./styles/tokens.css">
+<link rel="stylesheet" href="./styles/game.css">
+
+<!-- Firebase: scripts/firebase.js 참고 -->
+</head>
+<body>
+<div id="app">
+<div id="overlay"></div>
+
+<!-- ══════════════════════════════
+     TITLE
+══════════════════════════════ -->
+<div id="title-screen" class="screen active">
+  <!-- 다층 전장 배경 (장식용 인라인 SVG) -->
+  <svg class="title-bg-scene" viewBox="0 0 400 720" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="titleSkyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0d1530" />
+        <stop offset="38%" stop-color="#1e3562" />
+        <stop offset="68%" stop-color="#4e6e9e" />
+        <stop offset="100%" stop-color="#8ea8c8" />
+      </linearGradient>
+      <radialGradient id="titleDawnGlow" cx="50%" cy="62%" r="42%">
+        <stop offset="0%" stop-color="#ffe89c" stop-opacity="0.34" />
+        <stop offset="60%" stop-color="#f8d030" stop-opacity="0.10" />
+        <stop offset="100%" stop-color="#f8d030" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+
+    <!-- 밤→여명 하늘 -->
+    <rect x="0" y="0" width="400" height="470" fill="url(#titleSkyGrad)" />
+    <rect x="0" y="140" width="400" height="330" fill="url(#titleDawnGlow)" />
+
+    <!-- 상단 별빛 도트 -->
+    <g fill="#f8e8a8" opacity="0.65">
+      <rect x="34" y="32" width="3" height="3" />
+      <rect x="96" y="54" width="2" height="2" />
+      <rect x="168" y="26" width="3" height="3" />
+      <rect x="242" y="46" width="2" height="2" />
+      <rect x="318" y="30" width="3" height="3" />
+      <rect x="364" y="68" width="2" height="2" />
+      <rect x="64" y="96" width="2" height="2" />
+      <rect x="336" y="102" width="2" height="2" />
+    </g>
+
+    <!-- 도트 구름 -->
+    <g class="title-bg-clouds" fill="#d8e6f8" opacity="0.28">
+      <rect x="28" y="136" width="54" height="8" />
+      <rect x="38" y="128" width="34" height="8" />
+      <rect x="296" y="122" width="66" height="8" />
+      <rect x="310" y="114" width="38" height="8" />
+      <rect x="148" y="172" width="48" height="6" opacity="0.7" />
+      <rect x="158" y="166" width="26" height="6" opacity="0.7" />
+    </g>
+
+    <!-- 원경 산맥 -->
+    <polygon points="0,425 52,368 118,398 186,348 254,390 326,356 400,396 400,470 0,470" fill="#27385c" />
+    <polygon points="0,442 74,394 148,424 226,386 306,418 400,388 400,470 0,470" fill="#1d2b49" />
+
+    <!-- 중경 고려 성곽·성루 실루엣 -->
+    <g fill="#151d36">
+      <rect x="0" y="424" width="400" height="38" />
+      <!-- 좌측 성루 -->
+      <rect x="26" y="394" width="44" height="34" />
+      <rect x="22" y="388" width="52" height="8" />
+      <rect x="32" y="380" width="32" height="8" />
+      <!-- 중앙 대문 성루 -->
+      <rect x="162" y="388" width="76" height="40" />
+      <rect x="154" y="380" width="92" height="10" />
+      <rect x="168" y="370" width="64" height="10" />
+      <rect x="184" y="362" width="32" height="8" />
+      <!-- 우측 성루 -->
+      <rect x="330" y="396" width="44" height="32" />
+      <rect x="326" y="390" width="52" height="8" />
+      <rect x="336" y="382" width="32" height="8" />
+      <!-- 성벽 여장(요철) -->
+      <rect x="82" y="416" width="12" height="8" />
+      <rect x="106" y="416" width="12" height="8" />
+      <rect x="130" y="416" width="12" height="8" />
+      <rect x="258" y="416" width="12" height="8" />
+      <rect x="282" y="416" width="12" height="8" />
+      <rect x="306" y="416" width="12" height="8" />
+    </g>
+
+    <!-- 성곽 횃불 포인트 -->
+    <g fill="#f8d030" opacity="0.85">
+      <rect x="46" y="404" width="4" height="4" />
+      <rect x="184" y="402" width="4" height="4" />
+      <rect x="212" y="402" width="4" height="4" />
+      <rect x="350" y="406" width="4" height="4" />
+    </g>
+
+    <!-- 다층 전장 초원 지면 -->
+    <rect x="0" y="454" width="400" height="16" fill="#3a5924" />
+    <rect x="0" y="470" width="400" height="44" fill="#4c702e" />
+    <rect x="0" y="514" width="400" height="66" fill="#395721" />
+    <rect x="0" y="580" width="400" height="140" fill="#263c16" />
+
+    <!-- 지면 픽셀 잔디 텍스처 -->
+    <g fill="#5e863a" opacity="0.55">
+      <rect x="24" y="484" width="18" height="4" />
+      <rect x="108" y="496" width="24" height="4" />
+      <rect x="256" y="486" width="20" height="4" />
+      <rect x="340" y="502" width="22" height="4" />
+      <rect x="52" y="534" width="26" height="4" />
+      <rect x="302" y="542" width="28" height="4" />
+    </g>
+  </svg>
+
+  <!-- 최상단 15% 타이틀 배너 -->
+  <div class="title-logo-box">
+    <div class="title-ribbon">
+      <span class="title-crown" aria-hidden="true">👑</span>
+      <span>고려 건국 역사 RPG</span>
+    </div>
+    <h1>왕건의 통일 배틀</h1>
+    <p>후삼국을 하나로! 8개 지역을 정복하라!</p>
+  </div>
+
+  <!-- 중앙 대치 무대 (왕건 Lv.1 vs 호족 2배 스케일) -->
+  <div class="title-hero">
+    <div class="title-battle-row">
+      <div class="title-sprite-block title-sprite-block--player">
+        <div class="title-stage-unit">
+          <!-- 왕건 도트 캐릭터 (Lv.1) -->
+          <div class="sprite-slot sprite-title" id="title-sprite-player"></div>
+          <div class="title-platform title-platform--player" aria-hidden="true"></div>
+          <div class="sprite-shadow" aria-hidden="true"></div>
+        </div>
+        <div class="title-sprite-label title-sprite-label--player">
+          <span class="title-role-tag">고려 태조</span>
+          <span class="title-char-name">왕건</span>
+        </div>
+      </div>
+
+      <div class="title-vs" aria-label="대결">VS</div>
+
+      <div class="title-sprite-block title-sprite-block--enemy">
+        <div class="title-stage-unit">
+          <!-- 호족 도트 캐릭터 -->
+          <div class="sprite-slot sprite-title sprite-face-left" id="title-sprite-enemy"></div>
+          <div class="title-platform title-platform--enemy" aria-hidden="true"></div>
+          <div class="sprite-shadow" aria-hidden="true"></div>
+        </div>
+        <div class="title-sprite-label title-sprite-label--enemy">
+          <span class="title-role-tag">지방 세력</span>
+          <span class="title-char-name">호족</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 모드 선택 및 시작 패널 (여백 최소화·풀폭) -->
+  <div class="title-bottom">
+    <div class="title-bottom-inner">
+      <p>▶ 모드를 선택하세요</p>
+      <div class="mode-tabs">
+        <button type="button" class="mode-tab on" onclick="setMode(1,this)">혼자하기</button>
+        <button type="button" class="mode-tab" onclick="setMode(2,this)">성장모드</button>
+        <button type="button" class="mode-tab" onclick="setMode(3,this)">팀대항</button>
+      </div>
+      <button type="button" class="btn-start" onclick="BGM.play('title'); onStart();">▶ 게임 시작!</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     NICKNAME SCREEN
+══════════════════════════════ -->
+<div id="nickname-screen" class="screen">
+  <!-- 다층 전장 배경 (로비와 통일된 아레나 톤, 상단 배너 없는 비율에 맞춰 지평선 조정) -->
+  <svg class="nick-bg-scene" viewBox="0 0 400 720" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="nickSkyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0d1530" />
+        <stop offset="36%" stop-color="#1e3562" />
+        <stop offset="64%" stop-color="#4e6e9e" />
+        <stop offset="100%" stop-color="#8ea8c8" />
+      </linearGradient>
+      <radialGradient id="nickDawnGlow" cx="50%" cy="52%" r="44%">
+        <stop offset="0%" stop-color="#ffe89c" stop-opacity="0.34" />
+        <stop offset="60%" stop-color="#f8d030" stop-opacity="0.10" />
+        <stop offset="100%" stop-color="#f8d030" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+
+    <!-- 밤→여명 하늘 -->
+    <rect x="0" y="0" width="400" height="420" fill="url(#nickSkyGrad)" />
+    <rect x="0" y="90" width="400" height="330" fill="url(#nickDawnGlow)" />
+
+    <!-- 상단 별빛 도트 -->
+    <g fill="#f8e8a8" opacity="0.65">
+      <rect x="34" y="28" width="3" height="3" />
+      <rect x="96" y="48" width="2" height="2" />
+      <rect x="168" y="22" width="3" height="3" />
+      <rect x="242" y="42" width="2" height="2" />
+      <rect x="318" y="26" width="3" height="3" />
+      <rect x="364" y="64" width="2" height="2" />
+      <rect x="64" y="88" width="2" height="2" />
+      <rect x="336" y="96" width="2" height="2" />
+    </g>
+
+    <!-- 도트 구름 -->
+    <g fill="#d8e6f8" opacity="0.28">
+      <rect x="28" y="114" width="54" height="8" />
+      <rect x="38" y="106" width="34" height="8" />
+      <rect x="296" y="102" width="66" height="8" />
+      <rect x="310" y="94" width="38" height="8" />
+      <rect x="148" y="148" width="48" height="6" opacity="0.7" />
+      <rect x="158" y="142" width="26" height="6" opacity="0.7" />
+    </g>
+
+    <!-- 원경 산맥 -->
+    <polygon points="0,375 52,318 118,348 186,298 254,340 326,306 400,346 400,420 0,420" fill="#27385c" />
+    <polygon points="0,392 74,344 148,374 226,336 306,368 400,338 400,420 0,420" fill="#1d2b49" />
+
+    <!-- 중경 고려 성곽·성루 실루엣 -->
+    <g fill="#151d36">
+      <rect x="0" y="374" width="400" height="38" />
+      <rect x="26" y="344" width="44" height="34" />
+      <rect x="22" y="338" width="52" height="8" />
+      <rect x="32" y="330" width="32" height="8" />
+      <rect x="162" y="338" width="76" height="40" />
+      <rect x="154" y="330" width="92" height="10" />
+      <rect x="168" y="320" width="64" height="10" />
+      <rect x="184" y="312" width="32" height="8" />
+      <rect x="330" y="346" width="44" height="32" />
+      <rect x="326" y="340" width="52" height="8" />
+      <rect x="336" y="332" width="32" height="8" />
+      <rect x="82" y="366" width="12" height="8" />
+      <rect x="106" y="366" width="12" height="8" />
+      <rect x="130" y="366" width="12" height="8" />
+      <rect x="258" y="366" width="12" height="8" />
+      <rect x="282" y="366" width="12" height="8" />
+      <rect x="306" y="366" width="12" height="8" />
+    </g>
+
+    <!-- 성곽 횃불 포인트 -->
+    <g fill="#f8d030" opacity="0.85">
+      <rect x="46" y="354" width="4" height="4" />
+      <rect x="184" y="352" width="4" height="4" />
+      <rect x="212" y="352" width="4" height="4" />
+      <rect x="350" y="356" width="4" height="4" />
+    </g>
+
+    <!-- 다층 전장 초원 지면 -->
+    <rect x="0" y="404" width="400" height="18" fill="#3a5924" />
+    <rect x="0" y="422" width="400" height="50" fill="#4c702e" />
+    <rect x="0" y="472" width="400" height="72" fill="#395721" />
+    <rect x="0" y="544" width="400" height="176" fill="#263c16" />
+
+    <!-- 지면 픽셀 잔디 텍스처 -->
+    <g fill="#5e863a" opacity="0.55">
+      <rect x="24" y="438" width="18" height="4" />
+      <rect x="108" y="452" width="24" height="4" />
+      <rect x="256" y="440" width="20" height="4" />
+      <rect x="340" y="458" width="22" height="4" />
+      <rect x="52" y="494" width="26" height="4" />
+      <rect x="302" y="502" width="28" height="4" />
+    </g>
+  </svg>
+
+  <!-- 상단 대결 무대 (상단 배너 없음 → 넓어진 공간에 맞춰 왕건·물음표·VS 비례 확대) -->
+  <div class="nick-stage">
+    <div class="nick-battle-row">
+      <div class="nick-sprite-block nick-sprite-block--player">
+        <div class="nick-stage-unit">
+          <div class="sprite-slot sprite-nick" id="nick-sprite-player"></div>
+          <div class="nick-platform nick-platform--player" aria-hidden="true"></div>
+          <div class="sprite-shadow" aria-hidden="true"></div>
+        </div>
+        <div class="nick-sprite-label nick-sprite-label--player">
+          <span class="nick-role-tag">고려 태조</span>
+          <span class="nick-char-name">나의 왕건</span>
+        </div>
+      </div>
+
+      <div class="nick-vs" aria-label="대결">VS</div>
+
+      <div class="nick-sprite-block nick-sprite-block--enemy">
+        <div class="nick-stage-unit">
+          <div class="nick-mystery-slot" aria-hidden="true">
+            <svg class="nick-mystery-svg" viewBox="0 0 120 176" focusable="false">
+              <defs>
+                <linearGradient id="nickQGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ff6b57" />
+                  <stop offset="52%" stop-color="#e02e24" />
+                  <stop offset="100%" stop-color="#9e1414" />
+                </linearGradient>
+              </defs>
+              <!-- 도트 그림자 -->
+              <g fill="#12060a" opacity="0.92" transform="translate(6, 7)">
+                <path d="M24 22 h72 v14 h14 v44 h-14 v14 h-24 v24 h-24 v-38 h24 v-14 h14 v-22 h-48 v18 h-24 v-26 h10 z" />
+                <rect x="48" y="132" width="24" height="26" />
+              </g>
+              <!-- 외곽 금빛 테두리 -->
+              <g fill="#f8d030">
+                <path d="M18 16 h84 v14 h14 v54 h-14 v14 h-24 v24 h-36 v-44 h24 v-14 h14 v-16 h-36 v18 h-36 v-36 h10 z" />
+                <rect x="42" y="126" width="36" height="38" />
+              </g>
+              <!-- 메인 붉은 물음표 -->
+              <g fill="url(#nickQGrad)">
+                <path d="M24 22 h72 v14 h14 v44 h-14 v14 h-24 v24 h-24 v-38 h24 v-14 h14 v-22 h-48 v18 h-24 v-26 h10 z" />
+                <rect x="48" y="132" width="24" height="26" />
+              </g>
+              <!-- 픽셀 하이라이트 -->
+              <g fill="#ffe9a6" opacity="0.88">
+                <rect x="28" y="26" width="52" height="7" />
+                <rect x="92" y="40" width="8" height="22" />
+                <rect x="52" y="136" width="10" height="7" />
+              </g>
+            </svg>
+          </div>
+          <div class="nick-platform nick-platform--enemy" aria-hidden="true"></div>
+          <div class="sprite-shadow" aria-hidden="true"></div>
+        </div>
+        <div class="nick-sprite-label nick-sprite-label--enemy">
+          <span class="nick-role-tag">지방 세력</span>
+          <span class="nick-char-name">상대 호족</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 닉네임 입력 패널 (빠른 선택 제거, 풀폭·확대 비율 재배치) -->
+  <div class="nick-panel">
+    <div class="nick-panel-inner">
+      <div class="nick-sub" id="nick-mode-guide">닉네임을 쓰세요</div>
+
+      <div class="nick-input-wrap">
+        <input id="nick-input-field" type="text" maxlength="8"
+          placeholder="여기에 입력하세요"
+          oninput="onNickInput(this.value)"
+          onkeydown="if(event.key==='Enter') confirmNickname()"
+          autocomplete="off" autocorrect="off" spellcheck="false"
+          aria-describedby="nick-validation-msg" aria-invalid="false"
+        />
+        <div class="nick-char-count"><span id="nick-char-count-num">0</span>/8</div>
+      </div>
+      <div id="nick-validation-msg" class="nick-validation-msg" aria-live="polite">
+        한글, 영문, 숫자, 공백, 밑줄(_), 하이픈(-)만 사용할 수 있습니다.
+      </div>
+
+      <button type="button" class="btn-nick-confirm" id="btn-nick-confirm" onclick="confirmNickname()" disabled>
+        ▶ 다음 — 모둠 선택
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     TEAM SELECT
+══════════════════════════════ -->
+<div id="team-screen" class="screen">
+  <div class="team-h1">⚔️ 모둠 선택</div>
+  <div class="team-sub" id="team-sub-nick" style="color:var(--gold);font-size:14px"></div>
+  <div id="team-mode-pill" class="team-mode-pill offline">📋 오프라인 수업 코드 모드</div>
+  <div class="class-code-box">
+    <div class="class-code-label">
+      <span>🏫 수업 코드 (반 구분)</span>
+      <span style="color:#8892b0;font-size:11px">최대 12자</span>
+    </div>
+    <input id="class-code-input" class="class-code-input" type="text" maxlength="12"
+      placeholder="예: 2학년3반 (선생님 안내 코드)"
+      oninput="onClassCodeInput(this.value)"
+      autocomplete="off" autocorrect="off" spellcheck="false" />
+    <div class="class-code-hint" id="class-code-hint">
+      선생님이 알려준 수업 코드를 입력하세요. 비워두면 '기본수업'으로 기록됩니다.
+    </div>
+  </div>
+  <div class="team-grid">
+    <div class="team-card" onclick="pickTeam(0,this)">
+      <div class="team-card-emoji">🦅</div>
+      <div class="team-card-name">1모둠</div>
+      <div class="team-card-desc">고구려 · 북방의 패자</div>
+    </div>
+    <div class="team-card" onclick="pickTeam(1,this)">
+      <div class="team-card-emoji">🌊</div>
+      <div class="team-card-name">2모둠</div>
+      <div class="team-card-desc">신라 · 화랑의 후예</div>
+    </div>
+    <div class="team-card" onclick="pickTeam(2,this)">
+      <div class="team-card-emoji">🌾</div>
+      <div class="team-card-name">3모둠</div>
+      <div class="team-card-desc">백제 · 호남의 강자</div>
+    </div>
+    <div class="team-card" onclick="pickTeam(3,this)">
+      <div class="team-card-emoji">⚡</div>
+      <div class="team-card-name">4모둠</div>
+      <div class="team-card-desc">발해 · 북국의 후예</div>
+    </div>
+  </div>
+  <button class="btn-team-confirm" onclick="confirmTeam()">✔ 이 모둠으로 시작!</button>
+</div>
+
+<!-- ══════════════════════════════
+     MAP
+══════════════════════════════ -->
+<div id="map-screen" class="screen">
+  <div class="map-hud">
+    <div class="map-hud-row1">
+      <div class="hud-stats">
+        <div class="hstat">
+          <span class="hstat-lbl">충성</span>
+          <div class="hstat-bar"><div class="hstat-fill" id="hb-loyalty" style="background:var(--green)"></div></div>
+          <span class="hstat-val" id="hv-loyalty">50</span>
+        </div>
+        <div class="hstat">
+          <span class="hstat-lbl">안정</span>
+          <div class="hstat-bar"><div class="hstat-fill" id="hb-stability" style="background:var(--blue)"></div></div>
+          <span class="hstat-val" id="hv-stability">50</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <div class="team-hud-badge" id="team-badge-hud"></div>
+        <div class="lv-badge" id="lv-badge">Lv.1 👑</div>
+      </div>
+    </div>
+  </div>
+  <div class="exp-hud">
+    <span class="exp-lbl">EXP</span>
+    <div class="exp-bar-wrap"><div class="exp-bar-fill" id="exp-bar-map" style="width:0%"></div></div>
+    <span class="exp-val" id="exp-val-map">0 / 40 EXP</span>
+  </div>
+  <div class="map-topbar">
+    <span class="map-topbar-title">📍 고려 건국 지도</span>
+    <span class="map-topbar-prog" id="map-prog">0 / 8 완료</span>
+  </div>
+  <div class="map-scroll">
+    <div class="map-grid" id="map-grid"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     ENCOUNTER
+══════════════════════════════ -->
+<div id="encounter-screen" class="screen" onclick="stepEnc()">
+  <div class="enc-arena">
+    <div class="enc-balls-player"><div class="pball-row" id="enc-pballs-player"></div></div>
+    <div class="enc-balls-enemy"><div class="pball-row" id="enc-pballs-enemy"></div></div>
+    <div class="enc-side player">
+      <div class="sprite-slot sprite-enc-player" id="enc-sprite-player"></div>
+      <div class="enc-platform"></div>
+    </div>
+    <div class="enc-side enemy">
+      <div class="sprite-slot sprite-enc-enemy sprite-face-left" id="enc-sprite-enemy"></div>
+      <div class="enc-platform"></div>
+    </div>
+  </div>
+  <div class="enc-dialog">
+    <div class="enc-dialog-text" id="enc-text"></div>
+    <div class="enc-tap">화면을 탭하여 계속 ▼</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     BATTLE
+══════════════════════════════ -->
+<div id="battle-screen" class="screen">
+  <div class="battle-stage">
+    <!-- 적 HUD -->
+    <div class="b-hud-enemy">
+      <div class="b-hud-name-row">
+        <span class="b-hud-name" id="b-enemy-name">호족</span>
+        <span class="b-hud-lv">Lv.<span id="b-enemy-lv">3</span></span>
+      </div>
+      <div class="b-hp-row">
+        <span class="b-hp-lbl">HP</span>
+        <div class="b-hp-bg"><div class="b-hp-fill" id="b-enemy-hp" style="width:100%"></div></div>
+      </div>
+    </div>
+
+    <!-- 스프라이트 -->
+    <div class="b-plat-enemy"></div>
+    <div class="b-sprite-enemy sprite-slot sprite-face-left" id="b-sprite-enemy"></div>
+    <div class="b-plat-player"></div>
+    <div class="b-sprite-player sprite-slot" id="b-sprite-player"></div>
+
+    <!-- 플레이어 HUD -->
+    <div class="b-hud-player">
+      <div class="b-hud-name-row">
+        <span class="b-hud-name">왕건</span>
+        <span class="b-hud-lv">Lv.<span id="b-player-lv">1</span></span>
+      </div>
+      <div class="b-hp-row">
+        <span class="b-hp-lbl">HP</span>
+        <div class="b-hp-bg"><div class="b-hp-fill" id="b-player-hp" style="width:80%"></div></div>
+      </div>
+      <div class="b-hp-num" id="b-player-hp-num">80 / 100</div>
+      <div class="b-exp-row">
+        <span class="b-exp-lbl">EXP</span>
+        <div class="b-exp-bg"><div class="b-exp-fill" id="b-exp-fill" style="width:0%"></div></div>
+        <span class="b-exp-val" id="b-exp-val">0 / 40</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 타이머 바 -->
+  <div class="b-timer-wrap"><div class="b-timer-bar" id="b-timer-bar"></div></div>
+  <div id="battle-result-live" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- 하단 패널 -->
+  <div class="battle-panel">
+    <div class="b-dialog" id="b-dialog-wrap">
+      <div class="b-dialog-text" id="b-dialog"></div>
+    </div>
+    <div class="b-choices" id="b-choices">
+      <div class="b-choices-q" id="b-choices-q">왕건은 무엇을 할까?</div>
+      <div class="b-choices-grid" id="b-choices-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     역사 해설
+══════════════════════════════ -->
+<div id="explain-screen" class="screen">
+  <div class="explain-header">
+    <div class="explain-result-badge" id="exp-badge">정답!</div>
+    <div class="explain-policy-name" id="exp-policy-name">혼인 정책</div>
+    <div class="explain-chosen">선택한 정책: <span id="exp-chosen-text">-</span></div>
+  </div>
+  <div class="explain-body">
+    <div class="explain-section">
+      <div class="explain-section-title">📜 역사 해설</div>
+      <div class="explain-text" id="exp-main-text"></div>
+    </div>
+    <div class="explain-section">
+      <div class="explain-section-title">✅ 정답 해설</div>
+      <div class="explain-answer-box">
+        <div class="explain-answer-title">왜 이것이 정답인가?</div>
+        <div class="explain-answer-text" id="exp-correct-reason"></div>
+      </div>
+    </div>
+    <div class="explain-section">
+      <div class="explain-section-title">❌ 오답 해설</div>
+      <div id="exp-wrong-list"></div>
+    </div>
+    <div class="explain-stat-gained" id="exp-stat-row">
+      <div class="stat-chip"><div class="stat-chip-lbl">경험치</div><div class="stat-chip-val pos" id="sc-exp">+0</div></div>
+      <div class="stat-chip"><div class="stat-chip-lbl">충성도</div><div class="stat-chip-val" id="sc-loyalty">+0</div></div>
+      <div class="stat-chip"><div class="stat-chip-lbl">안정도</div><div class="stat-chip-val" id="sc-stability">+0</div></div>
+    </div>
+  </div>
+  <button class="btn-explain-continue" onclick="afterExplain()">▶ 계속 진행!</button>
+</div>
+
+<!-- ══════════════════════════════
+     LEVEL UP
+══════════════════════════════ -->
+<div id="levelup-screen" class="screen">
+  <div class="lu-flash"></div>
+  <div class="lu-box">
+    <div class="lu-title" id="lu-title">레벨 업!</div>
+    <div class="lu-sprite-row" id="lu-sprite"></div>
+    <div class="lu-name">왕건</div>
+    <div class="lu-title-text" id="lu-title-text"></div>
+    <div class="lu-stats" id="lu-stats"></div>
+    <button class="btn-lu-cont" onclick="afterLevelUp()">▶ 계속!</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     LEADERBOARD
+══════════════════════════════ -->
+<div id="leaderboard-screen" class="screen">
+  <div class="lb-h1">🏆 모둠 순위</div>
+  <div class="lb-sub" id="lb-score-rule">현재 통일 점수 현황</div>
+  <div id="lb-list"></div>
+  <button class="btn-lb-back" onclick="flashTo(()=>{showMap()})">▶ 지도로 돌아가기</button>
+
+</div>
+
+<!-- ══════════════════════════════
+     FINAL
+══════════════════════════════ -->
+<div id="final-screen" class="screen">
+  <div class="final-box">
+    <span class="final-trophy" id="final-trophy">🏆</span>
+    <div class="final-title" id="final-title">후삼국 통일 완성!</div>
+    <div class="final-grade">
+      <div class="fgrade-row"><span class="fgrade-k">최종 레벨</span><span class="fgrade-v gold" id="f-lv">Lv.1</span></div>
+      <div class="fgrade-row"><span class="fgrade-k">칭호</span><span class="fgrade-v gold" id="f-title">-</span></div>
+      <div class="fgrade-row"><span class="fgrade-k">총 경험치</span><span class="fgrade-v" id="f-exp">0</span></div>
+      <div class="fgrade-row"><span class="fgrade-k">충성도</span><span class="fgrade-v grn" id="f-loyalty">50%</span></div>
+      <div class="fgrade-row"><span class="fgrade-k">안정도</span><span class="fgrade-v grn" id="f-stability">50%</span></div>
+      <div class="fgrade-row"><span class="fgrade-k">역사 평가</span><span class="fgrade-v gold" id="f-rank">-</span></div>
+    </div>
+    <div class="final-msg" id="final-msg"></div>
+    <div id="final-receipt-card" class="receipt-card" style="display:none;">
+      <div class="receipt-card-title">📋 팀대항 결과 코드 제출</div>
+      <div class="receipt-card-sub" id="final-receipt-meta"></div>
+      <textarea id="final-receipt-code" class="receipt-code-box" rows="3" readonly onclick="this.select()"></textarea>
+      <button type="button" class="btn-receipt-copy" onclick="copyReceiptCode('final-receipt-code','final-receipt-status')">
+        📋 결과 코드 복사하기
+      </button>
+      <div id="final-receipt-status" class="receipt-copy-status"></div>
+    </div>
+    <button type="button" id="btn-final-lb" class="btn-teacher-sub" style="display:none;margin-bottom:10px;"
+      onclick="flashTo(()=>{ renderLeaderboard(); show('leaderboard'); })">
+      🏆 실시간 모둠 순위 보기
+    </button>
+    <button class="btn-final-restart" onclick="restart()">🔄 처음부터 다시!</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     TEACHER SCREEN (교사 전용)
+══════════════════════════════ -->
+<div id="teacher-screen" class="screen">
+  <div class="teacher-box">
+    <div class="teacher-title">🔐 교사 전용 메뉴</div>
+    <div class="teacher-sub">교사 비밀번호를 입력하세요</div>
+
+    <div class="teacher-pw-wrap">
+      <input id="teacher-pw-input" type="password"
+        placeholder="비밀번호 입력"
+        maxlength="10"
+        onkeydown="if(event.key==='Enter') checkTeacherPw()"
+      />
+    </div>
+    <div class="teacher-status" id="teacher-status"></div>
+
+    <div id="teacher-menu" style="display:none;margin-top:16px;">
+      <div class="teacher-section">
+        <div class="teacher-section-title">🔌 연결 모드 · 학생 접속 링크</div>
+        <div id="teacher-conn-badge" class="teacher-note" style="color:var(--gold);"></div>
+        <input id="teacher-class-code" class="teacher-input-sm" type="text" maxlength="12"
+          placeholder="수업 코드 입력 (예: 2학년3반)"
+          oninput="onTeacherClassCodeChange(this.value)" />
+        <button type="button" class="btn-teacher-sub" onclick="openFbConfigModal()">
+          ⚙️ 내 Firebase 연결 설정 (실시간 모드)
+        </button>
+        <button type="button" class="btn-teacher-sub green" onclick="copyTeacherShareLink()">
+          🔗 학생용 접속 링크 복사
+        </button>
+        <div id="teacher-link-status" class="teacher-note" style="color:#8df0a8;min-height:14px;"></div>
+      </div>
+
+      <div class="teacher-section">
+        <div class="teacher-section-title">📊 현재 참여 현황</div>
+        <div id="teacher-stats" style="color:var(--cream);font-size:13px;line-height:2"></div>
+      </div>
+
+      <div class="teacher-section" id="teacher-live-controls">
+        <div class="teacher-section-title">⚙️ 실시간 수업 관리 (Firebase 연결 시)</div>
+        <button class="btn-teacher-end" onclick="teacherEndSession()">
+          🏁 수업 종료 — 최종 순위 공개
+        </button>
+        <button class="btn-teacher-reset" onclick="teacherReset()">
+          🗑 현재 수업 점수 초기화
+        </button>
+      </div>
+
+      <div class="teacher-section">
+        <div class="teacher-section-title">📋 Firebase 없이 수업 코드 일괄 집계</div>
+        <div class="teacher-note">
+          학생들이 패들렛·채팅 등에 제출한 결과 코드(<code>WG1-...</code>)를 통째로 복사해 붙여넣으세요. 다른 텍스트가 섞여 있어도 코드만 자동 추출합니다.
+        </div>
+        <input id="offline-filter-code" class="teacher-input-sm" type="text" maxlength="12"
+          placeholder="집계할 수업 코드 필터 (비우면 전체 집계)" />
+        <textarea id="offline-codes-input" class="teacher-textarea"
+          placeholder="여기에 학생 결과 코드(WG1-...)들을 여러 줄로 붙여넣으세요"></textarea>
+        <button type="button" class="btn-teacher-sub green" onclick="aggregateOfflineCodes()">
+          🏆 결과 코드 집계 → 최종 모둠 순위 보기
+        </button>
+        <button type="button" class="btn-teacher-sub muted" onclick="clearOfflineCodes()">
+          🗑 입력칸 · 집계 데이터 비우기
+        </button>
+        <div id="offline-agg-status" class="teacher-note" style="color:var(--gold);min-height:16px;"></div>
+      </div>
+    </div>
+
+    <button class="btn-teacher-back" onclick="teacherGoBack()">
+      ← 돌아가기
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     FINAL-TEAM SCREEN (최종 팀 순위)
+══════════════════════════════ -->
+<div id="final-team-screen" class="screen">
+  <div style="background:var(--panel);border-top:4px solid var(--gold);padding:20px;flex-shrink:0;">
+    <div style="color:var(--gold);font-size:22px;text-align:center;text-shadow:2px 2px 0 #000;margin-bottom:4px;">
+      🏆 최종 모둠 순위
+    </div>
+    <div style="color:#888;font-size:13px;text-align:center;">수업 종료 — 최종 결과</div>
+  </div>
+
+  <div style="flex:1;overflow-y:auto;padding:16px;" id="final-team-list"></div>
+
+  <div style="padding:16px;background:var(--panel);border-top:3px solid var(--border);">
+    <button style="width:100%;padding:14px;background:#1a3a8a;border:3px solid var(--blue);
+      color:var(--cream);font-family:var(--px);font-size:16px;cursor:pointer;
+      box-shadow:0 4px 0 #0a1a50;" onclick="restart()">
+      🔄 처음부터 다시
+    </button>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<!-- Firebase 설정 오버레이 (교사 본인 Firebase 노코드 연동) -->
+<div id="fb-config-overlay" style="
+  display:none; position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,0.92); flex-direction:column;
+  align-items:center; justify-content:center; padding:18px; overflow-y:auto;
+">
+  <div style="background:#0a0a1e;border:3px solid #f8d030;padding:20px 18px;width:100%;max-width:430px;box-shadow:6px 6px 0 #000;">
+    <div style="color:#f8d030;font-size:17px;margin-bottom:10px;text-align:center;font-family:var(--px)">⚙️ 내 Firebase 실시간 연동 설정</div>
+    <div style="background:#040410;border:2px solid #2c3558;padding:10px 12px;font-size:11px;color:#b8c4e0;line-height:1.75;margin-bottom:12px;white-space:pre-wrap">1. Firebase Console에서 본인 프로젝트 생성
+2. Realtime Database 만들기 (테스트 모드 / sessions 읽기·쓰기 허용)
+3. 프로젝트 설정 → 웹 앱 등록 → firebaseConfig 복사
+4. 아래 칸에 그대로 붙여넣고 저장 후 [학생용 접속 링크 복사] 사용
+※ 파일을 직접 수정할 경우 scripts/firebase.js에 입력해도 됩니다.</div>
+    <textarea id="fb-config-input" class="teacher-textarea" style="min-height:115px;"
+      placeholder='firebaseConfig 코드 또는 JSON을 그대로 붙여넣으세요&#10;예: { apiKey: "...", databaseURL: "https://...-default-rtdb.firebaseio.com", projectId: "..." }'></textarea>
+    <div id="fb-config-msg" style="font-size:12px;color:#f8d030;min-height:18px;margin-bottom:10px;line-height:1.5;"></div>
+    <button type="button" class="btn-teacher-sub green" onclick="saveFbConfigFromModal()">
+      💾 저장 및 Firebase 연결 테스트
+    </button>
+    <button type="button" class="btn-teacher-sub muted" onclick="resetFbConfigFromModal()">
+      🗑 저장된 Firebase 삭제 (오프라인 모드로 전환)
+    </button>
+    <button type="button" class="btn-teacher-sub" onclick="closeFbConfigModal()">
+      ✕ 닫기
+    </button>
+  </div>
+</div>
+
+
+<button id="teacher-btn" onclick="openTeacherMenu()" title="교사 메뉴" style="position:fixed;top:10px;right:56px;z-index:998;width:40px;height:40px;background:#1a0a0a;border:2px solid #553333;color:#cc6666;font-size:16px;cursor:pointer;display:none;align-items:center;justify-content:center;border-radius:4px;box-shadow:2px 2px 0 #000;-webkit-tap-highlight-color:transparent;">🔐</button>
+<button id="mute-btn" onclick="toggleMuteBGM()" title="배경음악 켜짐. 누르면 끄기" aria-label="배경음악 켜짐. 누르면 끄기" aria-pressed="false" style="
+  position:fixed; top:10px; right:10px; z-index:998;
+  width:40px; height:40px;
+  background:#1a1a2e; border:2px solid #3a3a5c;
+  color:#f8d030; font-size:18px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  border-radius:4px; box-shadow:2px 2px 0 #000;
+  -webkit-tap-highlight-color:transparent;
+"><span id="mute-icon" aria-hidden="true">🎵</span><span id="mute-status-text" class="sr-only">배경음악 켜짐</span></button>
+
+
+<script src="./scripts/game-data.js"></script>
+<script src="./scripts/sprites.js"></script>
+<script src="./scripts/firebase.js"></script>
+<script>
+
+/* ══════════════════════════════════════════════════════
+   8비트 BGM 엔진 — Web Audio API 순수 생성
+   외부 파일 없이 코드로 작곡된 BGM
+══════════════════════════════════════════════════════ */
+const BGM = (() => {
+  let ctx = null;
+  let masterGain = null;
+  let currentNodes = [];
+  let loopTimer = null;
+  let muted = false;
+  let currentTrack = null;
+
+  function getCtx() {
+    if (!ctx) {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = ctx.createGain();
+      masterGain.gain.value = 0.22;
+      masterGain.connect(ctx.destination);
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+
+  // 음표 → Hz 변환 (완전판 — 누락 없음)
+  const NOTE = {
+    A2:110,   B2:123.47,
+    C3:130.81,D3:146.83,E3:164.81,F3:174.61,Fs3:185,G3:196,Gs3:207.65,A3:220,As3:233.08,B3:246.94,
+    C4:261.63,Cs4:277.18,D4:293.66,Ds4:311.13,E4:329.63,F4:349.23,Fs4:369.99,G4:392,Gs4:415.3,A4:440,As4:466.16,B4:493.88,
+    C5:523.25,Cs5:554.37,D5:587.33,Ds5:622.25,E5:659.25,F5:698.46,Fs5:739.99,G5:783.99,Gs5:830.61,A5:880,As5:932.33,B5:987.77,
+    C6:1046.5,D6:1174.66,E6:1318.51,
+    R:0
+  };
+
+  // 8비트 오실레이터 생성
+  function makeOsc(type, freq, startT, dur, vol, ac) {
+    // undefined / NaN / Infinity 완전 방어
+    if (!Number.isFinite(freq) || freq === 0) return null;
+    if (!Number.isFinite(startT) || !Number.isFinite(dur) || !Number.isFinite(vol)) return null;
+    if (dur <= 0) return null;
+    const osc = ac.createOscillator();
+    const g = ac.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, startT);
+    g.gain.setValueAtTime(0, startT);
+    g.gain.linearRampToValueAtTime(vol, startT + 0.01);
+    g.gain.setValueAtTime(vol, startT + dur * 0.7);
+    g.gain.linearRampToValueAtTime(0, startT + dur);
+    osc.connect(g);
+    g.connect(masterGain);
+    osc.start(startT);
+    osc.stop(startT + dur + 0.05);
+    return { osc, g };
+  }
+
+  // 노이즈 드럼
+  function makeDrum(startT, dur, vol, ac) {
+    const buf = ac.createBuffer(1, ac.sampleRate * 0.08, ac.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1);
+    const src = ac.createBufferSource();
+    const g = ac.createGain();
+    const filter = ac.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 200;
+    src.buffer = buf;
+    src.connect(filter);
+    filter.connect(g);
+    g.connect(masterGain);
+    g.gain.setValueAtTime(vol, startT);
+    g.gain.exponentialRampToValueAtTime(0.001, startT + dur);
+    src.start(startT);
+    return { src, g };
+  }
+
+  // 하이햇
+  function makeHihat(startT, vol, ac) {
+    const buf = ac.createBuffer(1, ac.sampleRate * 0.04, ac.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    const src = ac.createBufferSource();
+    const g = ac.createGain();
+    const hpf = ac.createBiquadFilter();
+    hpf.type = 'highpass';
+    hpf.frequency.value = 7000;
+    src.buffer = buf;
+    src.connect(hpf);
+    hpf.connect(g);
+    g.connect(masterGain);
+    g.gain.setValueAtTime(vol, startT);
+    g.gain.exponentialRampToValueAtTime(0.001, startT + 0.04);
+    src.start(startT);
+    return { src, g };
+  }
+
+  function scheduleTrack(trackFn) {
+    stop();
+    const ac = getCtx();
+    const nodes = [];
+    let cancelled = false;
+
+    function playLoop() {
+      if (cancelled || muted) return;
+      const startT = ac.currentTime + 0.05;
+      const dur = trackFn(ac, startT, nodes);
+      loopTimer = setTimeout(() => {
+        if (!cancelled && !muted) playLoop();
+      }, (dur - 0.1) * 1000);
+    }
+    playLoop();
+    currentNodes = nodes;
+    return () => { cancelled = true; };
+  }
+
+  function stop() {
+    if (loopTimer) { clearTimeout(loopTimer); loopTimer = null; }
+    currentNodes.forEach(n => {
+      try { if (n.osc) n.osc.stop(); if (n.src) n.src.stop(); } catch(e){}
+    });
+    currentNodes = [];
+    currentTrack = null;
+  }
+
+  /* ─────────────────────────────────────
+     트랙 1: 타이틀 — 고려 건국 팡파르
+     웅장하고 희망찬 느낌, 한국 5음계 기반
+  ───────────────────────────────────── */
+  function trackTitle(ac, t, nodes) {
+    const BPM = 108;
+    const Q = 60 / BPM / 2; // 8분음표
+    const H = Q * 2;
+    const W = Q * 4;
+    // 멜로디 (E장조 5음계 느낌)
+    const mel = [
+      [NOTE.E4,Q],[NOTE.G4,Q],[NOTE.A4,Q],[NOTE.B4,Q],
+      [NOTE.E5,H],[NOTE.D5,Q],[NOTE.B4,Q],
+      [NOTE.A4,Q],[NOTE.G4,Q],[NOTE.E4,Q],[NOTE.G4,Q],
+      [NOTE.A4,W],
+      [NOTE.B4,Q],[NOTE.A4,Q],[NOTE.G4,Q],[NOTE.E4,Q],
+      [NOTE.G4,H],[NOTE.A4,H],
+      [NOTE.B4,Q],[NOTE.G4,Q],[NOTE.A4,Q],[NOTE.B4,Q],
+      [NOTE.E5,W],
+    ];
+    // 베이스
+    const bass = [
+      [NOTE.E3,H],[NOTE.B3,H],[NOTE.A3,H],[NOTE.B3,H],
+      [NOTE.E3,H],[NOTE.B3,H],[NOTE.G3,H],[NOTE.A3,H],
+      [NOTE.E3,H],[NOTE.B3,H],[NOTE.A3,H],[NOTE.G3,H],
+      [NOTE.E3,W],
+      [NOTE.B3,H],[NOTE.A3,H],[NOTE.G3,H],[NOTE.A3,H],
+      [NOTE.B3,H],[NOTE.A3,H],[NOTE.G3,H],[NOTE.Fs4,H],
+      [NOTE.E3,H],[NOTE.G3,H],[NOTE.A3,H],[NOTE.B3,H],
+      [NOTE.E3,W],
+    ];
+
+    let mt = t, bt = t;
+    mel.forEach(([f,d]) => {
+      const n = makeOsc('square', f, mt, d * 0.85, 0.18, ac);
+      if(n) nodes.push(n);
+      mt += d;
+    });
+    bass.forEach(([f,d]) => {
+      const n = makeOsc('triangle', f * 0.5, bt, d * 0.8, 0.22, ac);
+      if(n) nodes.push(n);
+      bt += d;
+    });
+
+    // 드럼 패턴
+    const loopLen = 8 * Q;
+    for (let bar = 0; bar < 4; bar++) {
+      const bt2 = t + bar * loopLen;
+      for (let i = 0; i < 8; i++) {
+        if (i % 4 === 0) nodes.push(makeDrum(bt2 + i * Q, 0.15, 0.35, ac));
+        else if (i % 2 === 0) nodes.push(makeDrum(bt2 + i * Q, 0.08, 0.18, ac));
+        nodes.push(makeHihat(bt2 + i * Q, 0.08, ac));
+      }
+    }
+    return mt - t;
+  }
+
+  /* ─────────────────────────────────────
+     트랙 2: 지도 탐험 BGM
+     경쾌하고 호기심을 자극하는 반복 루프
+  ───────────────────────────────────── */
+  function trackMap(ac, t, nodes) {
+    const BPM = 126;
+    const Q = 60 / BPM / 2;
+    const H = Q * 2;
+
+    // 멜로디
+    const mel = [
+      [NOTE.G4,Q],[NOTE.A4,Q],[NOTE.B4,Q],[NOTE.D5,Q],
+      [NOTE.E5,H],[NOTE.D5,Q],[NOTE.B4,Q],
+      [NOTE.A4,Q],[NOTE.G4,Q],[NOTE.A4,Q],[NOTE.B4,Q],
+      [NOTE.G4,H],[NOTE.R,H],
+      [NOTE.D5,Q],[NOTE.E5,Q],[NOTE.D5,Q],[NOTE.B4,Q],
+      [NOTE.A4,H],[NOTE.G4,Q],[NOTE.A4,Q],
+      [NOTE.B4,Q],[NOTE.A4,Q],[NOTE.G4,Q],[NOTE.Fs4,Q],
+      [NOTE.G4,H+H],
+    ];
+    // 베이스
+    const bass = [
+      [NOTE.G3,H],[NOTE.D3,H],[NOTE.G3,H],[NOTE.D3,H],
+      [NOTE.E3,H],[NOTE.D3,H],[NOTE.G3,H],[NOTE.D3,H],
+      [NOTE.A3,H],[NOTE.E3,H],[NOTE.D3,H],[NOTE.G3,H],
+      [NOTE.G3,H+H],
+    ];
+    // 화음
+    const chord = [
+      [NOTE.B4,H],[NOTE.D5,H],[NOTE.G5,H],[NOTE.D5,H],
+      [NOTE.G4,H],[NOTE.B4,H],[NOTE.B4,H],[NOTE.D5,H],
+      [NOTE.A4,H],[NOTE.Cs5,H],[NOTE.A4,H],[NOTE.B4,H],
+      [NOTE.G4,H+H],
+    ];
+
+    let mt = t, bt = t, ct = t;
+    mel.forEach(([f,d]) => {
+      const n = makeOsc('square', f, mt, d*0.85, 0.15, ac);
+      if(n) nodes.push(n);
+      mt += d;
+    });
+    bass.forEach(([f,d]) => {
+      const n = makeOsc('triangle', f, bt, d*0.8, 0.18, ac);
+      if(n) nodes.push(n);
+      bt += d;
+    });
+    chord.forEach(([f,d]) => {
+      const n = makeOsc('sawtooth', f, ct, d*0.7, 0.06, ac);
+      if(n) nodes.push(n);
+      ct += d;
+    });
+
+    const loopLen = 8 * Q;
+    for (let bar = 0; bar < 4; bar++) {
+      const bt2 = t + bar * loopLen;
+      for (let i = 0; i < 8; i++) {
+        if (i === 0 || i === 4) nodes.push(makeDrum(bt2+i*Q,0.15,0.3,ac));
+        if (i === 2 || i === 6) nodes.push(makeDrum(bt2+i*Q,0.08,0.18,ac));
+        if (i % 2 === 1) nodes.push(makeHihat(bt2+i*Q, 0.07, ac));
+      }
+    }
+    return mt - t;
+  }
+
+  /* ─────────────────────────────────────
+     트랙 3: 트레이너 등장 BGM
+     긴장감, 짧고 강렬한 인트로
+  ───────────────────────────────────── */
+  function trackEncounter(ac, t, nodes) {
+    const BPM = 145;
+    const Q = 60 / BPM / 2;
+    const H = Q * 2;
+
+    const mel = [
+      [NOTE.E5,Q],[NOTE.R,Q],[NOTE.E5,Q],[NOTE.R,Q],
+      [NOTE.E5,Q],[NOTE.R,Q],[NOTE.G5,Q],[NOTE.R,Q],
+      [NOTE.E5,H],[NOTE.D5,Q],[NOTE.Cs5,Q],
+      [NOTE.D5,H],[NOTE.R,H],
+      [NOTE.B4,Q],[NOTE.R,Q],[NOTE.B4,Q],[NOTE.R,Q],
+      [NOTE.B4,Q],[NOTE.R,Q],[NOTE.D5,Q],[NOTE.R,Q],
+      [NOTE.B4,H],[NOTE.A4,Q],[NOTE.Gs4,Q],
+      [NOTE.A4,H+H],
+    ];
+    const bass = [
+      [NOTE.E3,Q],[NOTE.R,Q],[NOTE.E3,Q],[NOTE.R,Q],
+      [NOTE.E3,Q],[NOTE.R,Q],[NOTE.G3,Q],[NOTE.R,Q],
+      [NOTE.E3,H],[NOTE.D3,H],
+      [NOTE.D3,H+H],
+      [NOTE.B2,Q],[NOTE.R,Q],[NOTE.B2,Q],[NOTE.R,Q],
+      [NOTE.B2,Q],[NOTE.R,Q],[NOTE.D3,Q],[NOTE.R,Q],
+      [NOTE.B2,H],[NOTE.A2,H],
+      [NOTE.A3,H+H],
+    ];
+
+    let mt = t, bt = t;
+    mel.forEach(([f,d]) => {
+      const n = makeOsc('square', f, mt, d*0.8, 0.2, ac);
+      if(n) nodes.push(n);
+      mt += d;
+    });
+    bass.forEach(([f,d]) => {
+      const n = makeOsc('triangle', f, bt, d*0.75, 0.25, ac);
+      if(n) nodes.push(n);
+      bt += d;
+    });
+
+    const loopLen = 8 * Q;
+    for (let bar = 0; bar < 4; bar++) {
+      const bt2 = t + bar * loopLen;
+      for (let i = 0; i < 8; i++) {
+        if (i === 0) nodes.push(makeDrum(bt2+i*Q, 0.2, 0.5, ac));
+        if (i === 4) nodes.push(makeDrum(bt2+i*Q, 0.1, 0.28, ac));
+        nodes.push(makeHihat(bt2+i*Q, 0.1, ac));
+      }
+    }
+    return mt - t;
+  }
+
+  /* ─────────────────────────────────────
+     트랙 4: 배틀 BGM
+     박진감, 공격적인 8비트 테마
+     포켓몬 배틀 느낌 + 국악 음계
+  ───────────────────────────────────── */
+  function trackBattle(ac, t, nodes) {
+    const BPM = 158;
+    const Q = 60 / BPM / 2;
+    const H = Q * 2;
+
+    // A파트 멜로디
+    const melA = [
+      [NOTE.E5,Q],[NOTE.D5,Q],[NOTE.E5,Q],[NOTE.G5,Q],
+      [NOTE.E5,Q],[NOTE.D5,Q],[NOTE.B4,Q],[NOTE.D5,Q],
+      [NOTE.E5,Q],[NOTE.D5,Q],[NOTE.E5,Q],[NOTE.A5,Q],
+      [NOTE.G5,H],[NOTE.Fs5,H],
+      [NOTE.E5,Q],[NOTE.D5,Q],[NOTE.E5,Q],[NOTE.G5,Q],
+      [NOTE.B5,Q],[NOTE.A5,Q],[NOTE.G5,Q],[NOTE.E5,Q],
+      [NOTE.D5,Q],[NOTE.E5,Q],[NOTE.D5,Q],[NOTE.B4,Q],
+      [NOTE.E5,H+H],
+    ];
+    // B파트 멜로디 (조금 다른 방향)
+    const melB = [
+      [NOTE.A4,Q],[NOTE.B4,Q],[NOTE.D5,Q],[NOTE.E5,Q],
+      [NOTE.G5,Q],[NOTE.E5,Q],[NOTE.D5,Q],[NOTE.B4,Q],
+      [NOTE.A4,Q],[NOTE.G4,Q],[NOTE.A4,Q],[NOTE.B4,Q],
+      [NOTE.D5,H],[NOTE.E5,H],
+      [NOTE.G5,Q],[NOTE.E5,Q],[NOTE.G5,Q],[NOTE.A5,Q],
+      [NOTE.B5,H],[NOTE.G5,Q],[NOTE.E5,Q],
+      [NOTE.D5,Q],[NOTE.E5,Q],[NOTE.D5,Q],[NOTE.B4,Q],
+      [NOTE.E5,H+H],
+    ];
+    const bassA = [
+      [NOTE.E3,Q],[NOTE.E3,Q],[NOTE.E3,Q],[NOTE.G3,Q],
+      [NOTE.D3,Q],[NOTE.D3,Q],[NOTE.D3,Q],[NOTE.B3,Q],
+      [NOTE.E3,Q],[NOTE.E3,Q],[NOTE.A3,Q],[NOTE.G3,Q],
+      [NOTE.Fs3,H+H],
+      [NOTE.E3,Q],[NOTE.E3,Q],[NOTE.E3,Q],[NOTE.G3,Q],
+      [NOTE.B3,Q],[NOTE.A3,Q],[NOTE.G3,Q],[NOTE.E3,Q],
+      [NOTE.D3,Q],[NOTE.B2,Q],[NOTE.D3,Q],[NOTE.E3,Q],
+      [NOTE.E3,H+H],
+    ];
+
+    let mt = t, bt = t;
+    const mel = [...melA, ...melB];
+    mel.forEach(([f,d]) => {
+      const n = makeOsc('square', f, mt, d*0.78, 0.17, ac);
+      if(n) nodes.push(n);
+      mt += d;
+    });
+    bassA.forEach(([f,d]) => {
+      const n = makeOsc('triangle', f, bt, d*0.75, 0.22, ac);
+      if(n) nodes.push(n);
+      bt += d;
+    });
+    // 서브 멜로디 (화음)
+    let ct = t;
+    melA.forEach(([f,d]) => {
+      if (f > 0) {
+        const n = makeOsc('sawtooth', f * 0.749, ct, d*0.6, 0.05, ac);
+        if(n) nodes.push(n);
+      }
+      ct += d;
+    });
+
+    // 배틀 드럼 패턴 (빠른 8비트)
+    const loopLen = 8 * Q;
+    const totalBars = Math.ceil((mt - t) / loopLen);
+    for (let bar = 0; bar < totalBars; bar++) {
+      const bt2 = t + bar * loopLen;
+      for (let i = 0; i < 8; i++) {
+        if (i === 0 || i === 4) nodes.push(makeDrum(bt2+i*Q, 0.18, 0.45, ac));
+        if (i === 2 || i === 6) nodes.push(makeDrum(bt2+i*Q, 0.1, 0.22, ac));
+        nodes.push(makeHihat(bt2+i*Q, 0.09, ac));
+        if (i % 4 === 1) nodes.push(makeHihat(bt2+i*Q+Q*0.5, 0.05, ac));
+      }
+    }
+    return mt - t;
+  }
+
+  /* ─────────────────────────────────────
+     트랙 5: 레벨업 징글 (짧게 1회)
+  ───────────────────────────────────── */
+  function jingleLevelUp() {
+    if (muted) return;
+    const ac = getCtx();
+    const t = ac.currentTime + 0.05;
+    const Q = 0.1;
+    const seq = [
+      [NOTE.C4,Q],[NOTE.E4,Q],[NOTE.G4,Q],[NOTE.C5,Q],
+      [NOTE.E5,Q],[NOTE.G5,Q],[NOTE.C6,Q*2],
+    ];
+    let st = t;
+    seq.forEach(([f,d]) => {
+      const n = makeOsc('square', f, st, d*0.85, 0.2, ac);
+      if(n) n.osc && n.osc.stop(st + d + 0.1);
+      st += d;
+    });
+  }
+
+  /* ─────────────────────────────────────
+     트랙 6: 정답 효과음
+  ───────────────────────────────────── */
+  function sfxCorrect() {
+    if (muted) return;
+    const ac = getCtx();
+    const t = ac.currentTime + 0.02;
+    [[NOTE.E5,0.07],[NOTE.G5,0.07],[NOTE.B5,0.12]].forEach(([f,d],i) => {
+      makeOsc('square', f, t+i*0.08, d, 0.18, ac);
+    });
+  }
+
+  /* ─────────────────────────────────────
+     트랙 7: 오답 효과음
+  ───────────────────────────────────── */
+  function sfxWrong() {
+    if (muted) return;
+    const ac = getCtx();
+    const t = ac.currentTime + 0.02;
+    [[NOTE.B3,0.1],[NOTE.G3,0.1],[NOTE.E3,0.18]].forEach(([f,d],i) => {
+      makeOsc('sawtooth', f, t+i*0.1, d, 0.15, ac);
+    });
+  }
+
+  /* ─────────────────────────────────────
+     트랙 8: 엔딩 팡파르
+  ───────────────────────────────────── */
+  function trackEnding(ac, t, nodes) {
+    const BPM = 100;
+    const Q = 60 / BPM / 2;
+    const H = Q * 2;
+    const W = H * 2;
+
+    const mel = [
+      [NOTE.C5,Q],[NOTE.E5,Q],[NOTE.G5,Q],[NOTE.C6,H],
+      [NOTE.B5,Q],[NOTE.G5,Q],[NOTE.E5,Q],[NOTE.G5,Q],
+      [NOTE.A5,H],[NOTE.G5,H],
+      [NOTE.E5,W],
+      [NOTE.G5,Q],[NOTE.A5,Q],[NOTE.B5,Q],[NOTE.C6,H],
+      [NOTE.B5,Q],[NOTE.A5,Q],[NOTE.G5,Q],[NOTE.E5,Q],
+      [NOTE.D5,H],[NOTE.C5,H],
+      [NOTE.C5,W],
+    ];
+    const bass = [
+      [NOTE.C3,H],[NOTE.G3,H],[NOTE.C4,H],[NOTE.G3,H],
+      [NOTE.F3,H],[NOTE.C3,H],[NOTE.G3,H],[NOTE.G3,H],
+      [NOTE.A3,H],[NOTE.F3,H],[NOTE.C3,W],
+      [NOTE.G3,H],[NOTE.D3,H],[NOTE.G3,H],[NOTE.F3,H],
+      [NOTE.C3,H],[NOTE.G3,H],[NOTE.C3,W],
+    ];
+
+    let mt = t, bt = t;
+    mel.forEach(([f,d]) => {
+      const n = makeOsc('square', f, mt, d*0.88, 0.18, ac);
+      if(n) nodes.push(n);
+      mt += d;
+    });
+    bass.forEach(([f,d]) => {
+      const n = makeOsc('triangle', f, bt, d*0.82, 0.2, ac);
+      if(n) nodes.push(n);
+      bt += d;
+    });
+
+    const loopLen = 8 * Q;
+    for (let bar = 0; bar < 4; bar++) {
+      const bt2 = t + bar * loopLen;
+      for (let i = 0; i < 8; i++) {
+        if (i === 0 || i === 4) nodes.push(makeDrum(bt2+i*Q, 0.14, 0.32, ac));
+        if (i === 2 || i === 6) nodes.push(makeDrum(bt2+i*Q, 0.08, 0.18, ac));
+        nodes.push(makeHihat(bt2+i*Q, 0.07, ac));
+      }
+    }
+    return mt - t;
+  }
+
+  // 공개 API
+  return {
+    play(track) {
+      if (muted) return;
+      if (currentTrack === track) return;
+      currentTrack = track;
+      getCtx();
+      const tracks = {
+        title:     () => scheduleTrack(trackTitle),
+        map:       () => scheduleTrack(trackMap),
+        encounter: () => scheduleTrack(trackEncounter),
+        battle:    () => scheduleTrack(trackBattle),
+        ending:    () => scheduleTrack(trackEnding),
+      };
+      if (tracks[track]) tracks[track]();
+    },
+    jingle(type) {
+      if (type === 'levelup') jingleLevelUp();
+      else if (type === 'correct') sfxCorrect();
+      else if (type === 'wrong') sfxWrong();
+    },
+    stop() { stop(); },
+    toggleMute() {
+      muted = !muted;
+      if (muted) {
+        if (masterGain) masterGain.gain.value = 0;
+        stop();
+      } else {
+        if (!ctx) getCtx();
+        if (masterGain) masterGain.gain.value = 0.22;
+      }
+      return muted;
+    },
+    isMuted() { return muted; }
+  };
+})();
+
+/* ══════════════════════════════════════
+   외부 캐릭터 스프라이트 (scripts/sprites.js)
+══════════════════════════════════════ */
+if (!window.GAME_SPRITES) {
+  throw new Error(
+    '캐릭터 스프라이트를 불러오지 못했습니다. scripts/sprites.js 경로를 확인하세요.'
+  );
+}
+const {
+  SPRITES,
+  renderSprite: setSvg,
+  playSpriteAction,
+  resetSpriteIdle,
+} = window.GAME_SPRITES;
+
+/* ══════════════════════════════════════
+   외부 게임 데이터
+══════════════════════════════════════ */
+if (!window.GAME_DATA) {
+  throw new Error(
+    '게임 데이터를 불러오지 못했습니다. scripts/game-data.js 경로를 확인하세요.'
+  );
+}
+
+const {
+  TITLES_TABLE,
+  EXP_THRESHOLDS,
+  SCENARIOS,
+  TEAMS
+} = window.GAME_DATA;
+
+/* ══════════════════════════════════════
+   외부 Firebase 모듈 (scripts/firebase.js)
+══════════════════════════════════════ */
+if (!window.GAME_FIREBASE) {
+  throw new Error(
+    'Firebase 모듈을 불러오지 못했습니다. scripts/firebase.js 경로를 확인하세요.'
+  );
+}
+const FB = window.GAME_FIREBASE;
+const initFirebase = () => FB.init();
+
+/* ══════════════════════════════════════
+   닉네임 화면
+══════════════════════════════════════ */
+const NICKNAME_MAX_LENGTH=8;
+const NICKNAME_ALLOWED_RE=/^[가-힣ㄱ-ㅎㅏ-ㅣA-Za-z0-9 _-]+$/;
+const PLAYER_ID_STORAGE_KEY='wanggeon-player-id';
+let _memoryPlayerId='';
+function validateNickname(v){
+  const nickname=String(v||'').trim().replace(/\s+/g,' ');
+  if(!nickname)return{valid:false,nickname:'',message:'한글, 영문, 숫자, 공백, 밑줄(_), 하이픈(-)만 사용할 수 있습니다.'};
+  if(nickname.length>8)return{valid:false,nickname,message:'닉네임은 8자 이하로 입력해 주세요.'};
+  if(!NICKNAME_ALLOWED_RE.test(nickname))return{valid:false,nickname,message:'사용할 수 없는 문자가 있습니다. 특수문자는 밑줄(_)과 하이픈(-)만 허용됩니다.'};
+  return{valid:true,nickname,message:'사용 가능한 닉네임입니다.'};
+}
+function createPlayerId(){
+  const r=window.crypto&&typeof window.crypto.randomUUID==='function'
+    ?window.crypto.randomUUID().replace(/-/g,'')
+    :Date.now().toString(36)+Math.random().toString(36).slice(2,12);
+  return('p_'+r).slice(0,48);
+}
+function getOrCreatePlayerId(){
+  if(_memoryPlayerId)return _memoryPlayerId;
+  try{const s=sessionStorage.getItem(PLAYER_ID_STORAGE_KEY);
+    if(s&&/^p_[A-Za-z0-9_-]{6,48}$/.test(s)){_memoryPlayerId=s;return s;}}catch(e){}
+  _memoryPlayerId=createPlayerId();
+  try{sessionStorage.setItem(PLAYER_ID_STORAGE_KEY,_memoryPlayerId);}catch(e){}
+  return _memoryPlayerId;
+}
+function escapeHtml(v){
+  const m={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+  return String(v??'').replace(/[&<>"']/g,c=>m[c]);
+}
+function toSafeInteger(v,min=0,max=999999){
+  const n=Number(v);return Number.isFinite(n)?Math.min(max,Math.max(min,Math.round(n))):min;
+}
+function normalizePlayerRecord(p){
+  const r=p&&typeof p==='object'?p:{},team=Number(r.team);
+  return{...r,playerId:typeof r.playerId==='string'?r.playerId.slice(0,48):'',
+    nickname:String(r.nickname??'').trim().slice(0,20)||'익명',
+    team:Number.isInteger(team)?team:-1,score:toSafeInteger(r.score),
+    exp:toSafeInteger(r.exp),loyalty:toSafeInteger(r.loyalty,0,100),
+    stability:toSafeInteger(r.stability,0,100),visited:toSafeInteger(r.visited,0,8),
+    level:toSafeInteger(r.level,1,5)};
+}
+function isCurrentPlayer(p){
+  if(!p)return false;if(G.playerId)return p.playerId===G.playerId;
+  return!p.playerId&&p.nickname===G.nickname;
+}
+function onNickInput(val){
+  const input=document.getElementById('nick-input-field'),v=String(val||'').slice(0,8);
+  const r=validateNickname(v),msg=document.getElementById('nick-validation-msg');
+  input.value=v;input.setAttribute('aria-invalid',v.trim()&&!r.valid?'true':'false');
+  document.getElementById('nick-char-count-num').textContent=v.length;
+  document.getElementById('btn-nick-confirm').disabled=!r.valid;
+  if(msg){msg.textContent=r.message;msg.className='nick-validation-msg '+(r.valid?'ok':(v.trim()?'error':''));}
+}
+function setNickPreset(n){document.getElementById('nick-input-field').value=n;onNickInput(n);}
+function confirmNickname(){
+  const input=document.getElementById('nick-input-field'),r=validateNickname(input.value);
+  if(!r.valid){onNickInput(input.value);input.focus();return;}
+  G.nickname=r.nickname;G.playerId=getOrCreatePlayerId();input.value=r.nickname;
+  if(G.phase===3){const s=document.getElementById('team-sub-nick');if(s)s.textContent='👤 '+G.nickname+' · 모둠을 선택하세요';flashTo(()=>show('team'));}
+  else{initGame();flashTo(()=>{show('map');renderMap();BGM.play('map');});}
+}
+
+/* ══════════════════════════════════════
+   시간 기반 점수 차등 시스템
+   - 선택지 표시 후 15초 타이머
+   - 정답 + 빠를수록 보너스 (최대 +5점)
+   - 오답은 시간 보너스 없음
+══════════════════════════════════════ */
+const TIMER_LIMIT = 15;   // 초
+let _choiceStartTime = 0; // 선택지가 뜬 시각
+let _timerRAF = null;     // requestAnimationFrame 핸들
+let _timerDone = false;
+
+function startChoiceTimer() {
+  _choiceStartTime = performance.now();
+  _timerDone = false;
+  const bar = document.getElementById('b-timer-bar');
+  if (!bar) return;
+
+  function tick() {
+    if (_timerDone) return;
+    const elapsed = (performance.now() - _choiceStartTime) / 1000;
+    const pct = Math.max(0, 1 - elapsed / TIMER_LIMIT);
+    bar.style.width = (pct * 100) + '%';
+
+    // 색상 변화: 초록→노랑→빨강
+    if (pct > 0.5)      bar.style.background = 'var(--green)';
+    else if (pct > 0.25) bar.style.background = 'var(--gold)';
+    else                 bar.style.background = 'var(--red)';
+
+    if (pct > 0) _timerRAF = requestAnimationFrame(tick);
+    else {
+      // 시간 초과 — 자동 오답 처리 없이 그냥 멈춤 (학생이 선택하면 됨)
+      bar.style.width = '0%';
+    }
+  }
+  _timerRAF = requestAnimationFrame(tick);
+}
+
+function stopChoiceTimer() {
+  _timerDone = true;
+  if (_timerRAF) { cancelAnimationFrame(_timerRAF); _timerRAF = null; }
+  const bar = document.getElementById('b-timer-bar');
+  if (bar) { bar.style.width = '0%'; bar.style.background = 'var(--gold)'; }
+}
+
+function calcTimeBonus(elapsedSec) {
+  if (elapsedSec <= 3) return 5;
+  if (elapsedSec <= 5) return 4;
+  if (elapsedSec <= 8) return 3;
+  if (elapsedSec <= 12) return 1;
+  return 0;
+}
+
+// 보너스 팝업 표시
+function showTimeBonusPopup(bonus) {
+  const stage = document.querySelector('.battle-stage');
+  if (!stage || bonus <= 0) return;
+  const el = document.createElement('div');
+  el.className = 'time-bonus-popup';
+  el.textContent = '⚡ 팀 속도 보너스 +' + bonus + '점';
+  stage.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+/* ══════════════════════════════════════
+   게임 상태
+══════════════════════════════════════ */
+let G = {
+  phase: 1,
+  currentScreen: 'title',
+  prevScreen: 'map',
+  nickname: '',
+  playerId: '',
+  classCode: FB.getClassCode() || '',
+  level: 1, exp: 0, speedBonus: 0,
+  loyalty: 50, stability: 50,
+  visited: new Set(),
+  curLoc: null,
+  encStep: 0,
+  pendingLU: false,
+  pendingExplain: null,
+  team: -1,
+};
+
+/* ══════════════════════════════════════
+   화면 전환
+══════════════════════════════════════ */
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id+'-screen').classList.add('active');
+  G.currentScreen = id;
+  // 교사 버튼: 타이틀·모둠 선택 화면 및 팀대항 진행 화면에서 표시
+  const teacherBtn = document.getElementById('teacher-btn');
+  if (teacherBtn) {
+    const showTeacher = (id === 'title' || id === 'team') ||
+      (G.phase === 3 && ['map','encounter','battle','explain','levelup','leaderboard','final-team','final'].includes(id));
+    teacherBtn.style.display = showTeacher ? 'flex' : 'none';
+  }
+  if (id === 'team') refreshTeamScreenModeUI();
+}
+
+function flashTo(fn) {
+  const ov = document.getElementById('overlay');
+  ov.classList.add('show');
+  setTimeout(()=>{ fn(); setTimeout(()=>ov.classList.remove('show'),250); },250);
+}
+
+/* ══════════════════════════════════════
+   타이틀
+══════════════════════════════════════ */
+function updateNicknameModeUI(){
+  const g=document.getElementById('nick-mode-guide'),b=document.getElementById('btn-nick-confirm');
+  const m={1:{g:'닉네임을 쓰세요',b:'▶ 혼자하기 시작'},2:{g:'닉네임을 쓰세요',b:'▶ 성장모드 시작'},3:{g:'닉네임을 쓰세요',b:'▶ 다음 — 모둠 선택'}};
+  const c=m[G.phase]||m[1];if(g)g.textContent=c.g;if(b)b.textContent=c.b;
+}
+function setMode(n,el){G.phase=n;document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');updateNicknameModeUI();}
+function onStart(){updateNicknameModeUI();onNickInput('');flashTo(()=>show('nickname'));}
+
+/* ══════════════════════════════════════
+   팀 선택
+══════════════════════════════════════ */
+function pickTeam(i,el){
+  G.team=i;
+  document.querySelectorAll('.team-card').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+}
+function onClassCodeInput(val){
+  const norm = FB.normalizeClassCode(val);
+  const el = document.getElementById('class-code-input');
+  if (el && el.value !== norm) el.value = norm;
+  G.classCode = FB.setClassCode(norm);
+}
+
+function refreshTeamScreenModeUI(){
+  const pill = document.getElementById('team-mode-pill');
+  const input = document.getElementById('class-code-input');
+  const hint = document.getElementById('class-code-hint');
+  const summary = FB.getConfigSummary();
+  const code = G.classCode || FB.getClassCode();
+  if (input && !input.value && code) input.value = code;
+  if (pill) {
+    if (summary.configured) {
+      pill.className = 'team-mode-pill online';
+      pill.textContent = `🟢 실시간 Firebase 연동됨 (${summary.projectId})`;
+    } else {
+      pill.className = 'team-mode-pill offline';
+      pill.textContent = '📋 오프라인 수업 코드 모드 (완료 후 결과 코드 제출)';
+    }
+  }
+  if (hint) {
+    hint.textContent = summary.configured
+      ? '수업 코드를 입력하면 같은 날 여러 반이 동시에 수업해도 점수가 섞이지 않습니다.'
+      : 'Firebase 없이 진행합니다. 8개 거점 완료 후 발급되는 결과 코드를 선생님께 제출하세요.';
+  }
+}
+
+function confirmTeam(){
+  if(G.team<0){ alert('모둠을 선택해주세요!'); return; }
+  const codeEl = document.getElementById('class-code-input');
+  const entered = FB.normalizeClassCode(codeEl ? codeEl.value : G.classCode);
+  const summary = FB.getConfigSummary();
+  G.classCode = FB.setClassCode(entered || (summary.configured ? '' : '기본수업'));
+  initGame();
+  const t=TEAMS[G.team];
+  const b=document.getElementById('team-badge-hud');
+  b.textContent=t.emoji+' '+G.nickname+(G.classCode?' ['+G.classCode+']':'');
+  b.classList.add('show');
+  flashTo(()=>{ show('map'); renderMap(); BGM.play('map'); });
+  if (summary.configured) {
+    initFirebase().then((connected)=>{
+      if(connected && fbReady()) startScorePoll();
+    });
+  }
+}
+
+/* ══════════════════════════════════════
+   게임 초기화
+══════════════════════════════════════ */
+function initGame(){
+  G.level=1; G.exp=0; G.speedBonus=0; G.loyalty=50; G.stability=50;
+  G.visited=new Set(); G.curLoc=null;
+  updateHUD();
+}
+
+/* ══════════════════════════════════════
+   MAP
+══════════════════════════════════════ */
+function renderMap(){
+  const grid=document.getElementById('map-grid');
+  grid.innerHTML='';
+  SCENARIOS.forEach((sc,i)=>{
+    const done=G.visited.has(i);
+    const tile=document.createElement('div');
+    tile.className='map-tile'+(done?' done':'');
+    const stars=[1,2,3].map(s=>`<span class="star${s>sc.difficulty?' off':''}" >★</span>`).join('');
+    tile.innerHTML=`
+      <div class="tile-ico">${sc.locationEmoji}</div>
+      <div class="tile-info">
+        <div class="tile-name">${sc.locationName}</div>
+        <div class="tile-sub">${sc.npcName}</div>
+        <div class="tile-stars">${stars}</div>
+      </div>
+      ${done?'<div class="tile-check">✔</div>':''}
+    `;
+    if(!done) tile.onclick=()=>startEnc(i);
+    grid.appendChild(tile);
+  });
+  document.getElementById('map-prog').textContent=`${G.visited.size} / 8 완료`;
+
+  // Phase3 리더보드 버튼
+  if(G.phase===3 && !document.getElementById('lb-btn-map')){
+    const btn=document.createElement('button');
+    btn.id='lb-btn-map'; btn.className='lb-btn';
+    btn.textContent='🏆 모둠 순위 보기';
+    btn.onclick=()=>flashTo(()=>{ renderLeaderboard(); show('leaderboard'); });
+    document.querySelector('.map-scroll').appendChild(btn);
+  }
+}
+
+function showMap(){
+  show('map'); renderMap(); updateHUD(); BGM.play('map');
+}
+
+function getExpState(expVal, lvVal){
+  const safeExp=Math.max(0, Number(expVal)||0);
+  const lv=Math.min(5, Math.max(1, Number(lvVal)||calcLv(safeExp)));
+  const maxExp=EXP_THRESHOLDS[4]||160;
+  if(lv>=5){
+    return { lv:5, cur:maxExp, need:maxExp, total:safeExp, pct:100, mapText:`MAX (${safeExp} EXP)`, battleText:'MAX' };
+  }
+  const lo=EXP_THRESHOLDS[lv-1]||0;
+  const hi=EXP_THRESHOLDS[lv]||(lo+40);
+  const need=Math.max(1, hi-lo);
+  const cur=Math.max(0, safeExp-lo);
+  const pct=Math.min(100, Math.max(0, (cur/need)*100));
+  const shownCur=Math.min(cur, need);
+  return { lv, cur:shownCur, need, total:safeExp, pct, mapText:`${shownCur} / ${need} EXP`, battleText:`${shownCur} / ${need}` };
+}
+
+function updateHUD(){
+  G.level=calcLv(G.exp);
+  const lp=Math.min(100,Math.max(0,G.loyalty));
+  const sp=Math.min(100,Math.max(0,G.stability));
+  document.getElementById('hb-loyalty').style.width=lp+'%';
+  document.getElementById('hb-stability').style.width=sp+'%';
+  document.getElementById('hv-loyalty').textContent=lp;
+  document.getElementById('hv-stability').textContent=sp;
+
+  const td=getTD();
+  document.getElementById('lv-badge').textContent='Lv.'+G.level+' '+td.spriteEmoji;
+
+  const st=getExpState(G.exp, G.level);
+  document.getElementById('exp-bar-map').style.width=st.pct+'%';
+  document.getElementById('exp-val-map').textContent=st.mapText;
+}
+
+/* ══════════════════════════════════════
+   ENCOUNTER
+══════════════════════════════════════ */
+function applyStageScene(sc) {
+  const stageId = sc && sc.id ? sc.id : '';
+  let resolvedUrl = '';
+  if (sc && sc.bgImage) {
+    try {
+      resolvedUrl = `url("${new URL(sc.bgImage, document.baseURI).href}")`;
+    } catch (e) {
+      resolvedUrl = `url("${sc.bgImage}")`;
+    }
+  }
+  const encScreen = document.getElementById('encounter-screen');
+  const battleScreen = document.getElementById('battle-screen');
+  if (encScreen) encScreen.dataset.stage = stageId;
+  if (battleScreen) battleScreen.dataset.stage = stageId;
+
+  const targets = [
+    encScreen ? encScreen.querySelector('.enc-arena') : null,
+    battleScreen ? battleScreen.querySelector('.battle-stage') : null,
+  ];
+  targets.forEach((el) => {
+    if (!el) return;
+    if (resolvedUrl) {
+      el.style.setProperty('--stage-bg-image', resolvedUrl);
+      el.classList.add('has-bg-image');
+    } else {
+      el.style.removeProperty('--stage-bg-image');
+      el.classList.remove('has-bg-image');
+    }
+  });
+}
+
+function startEnc(idx){
+  G.curLoc=idx;
+  G.encStep=0;
+  const sc=SCENARIOS[idx];
+  applyStageScene(sc);
+
+  // 플레이어 스프라이트
+  const td=getTD();
+  setSvg(document.getElementById('enc-sprite-player'), td.sprite);
+  setSvg(document.getElementById('enc-sprite-enemy'), sc.npcSprite);
+
+  // 포켓볼
+  renderPballs('enc-pballs-player', Math.min(6,8-G.visited.size), 0);
+  renderPballs('enc-pballs-enemy', 3, 0);
+
+  setEncText(`${sc.npcName}이(가)\n승부를 걸어왔다!`);
+  flashTo(()=>{ show('encounter'); BGM.play('encounter'); });
+}
+
+function renderPballs(cid, total, used){
+  const c=document.getElementById(cid);
+  if(!c) return;
+  c.innerHTML='';
+  for(let i=0;i<total;i++){
+    const b=document.createElement('div');
+    b.className='pball'+(i<used?' used':'');
+    c.appendChild(b);
+  }
+}
+
+function setEncText(t){
+  document.getElementById('enc-text').innerHTML=t.replace(/\n/g,'<br>')+'<span class="cursor-blink"></span>';
+}
+
+function stepEnc(){
+  G.encStep++;
+  if(G.encStep===1){
+    const sc=SCENARIOS[G.curLoc];
+    setEncText(`${sc.npcName}:\n"${sc.dialogue.replace(/\n/g,'<br>')}"`);
+  } else {
+    flashTo(()=>startBattle());
+  }
+}
+
+/* ══════════════════════════════════════
+   BATTLE
+══════════════════════════════════════ */
+function startBattle(){
+  const sc=SCENARIOS[G.curLoc];
+  applyStageScene(sc);
+  const td=getTD();
+
+  // HUD
+  document.getElementById('b-enemy-name').textContent=sc.npcName;
+  document.getElementById('b-enemy-lv').textContent=sc.difficulty*2+1;
+  document.getElementById('b-player-lv').textContent=G.level;
+  document.getElementById('b-enemy-hp').style.width='100%';
+  document.getElementById('b-enemy-hp').className='b-hp-fill';
+  document.getElementById('b-player-hp').style.width='80%';
+  document.getElementById('b-player-hp').className='b-hp-fill';
+  document.getElementById('b-player-hp-num').textContent='80 / 100';
+  updateBattleExpBar();
+
+  // 스프라이트
+  setSvg(document.getElementById('b-sprite-player'), td.sprite);
+  setSvg(document.getElementById('b-sprite-enemy'), sc.npcSprite);
+
+  stopChoiceTimer(); // 이전 타이머 정리
+  show('battle');
+  BGM.play('battle');
+  setBDialog(`${sc.npcName}이(가)\n나타났다!`, false);
+  setTimeout(()=>setBDialog(sc.questionPrompt||`왕건은 어떻게 할까?`, true, sc.choices), 1400);
+}
+
+function setBDialog(txt, showC, choices){
+  document.getElementById('b-dialog').innerHTML=txt.replace(/\n/g,'<br>');
+  const wrap=document.getElementById('b-dialog-wrap');
+  const box=document.getElementById('b-choices');
+  if(showC && choices){
+    wrap.style.display='none';box.classList.add('show');
+    const liveResult=document.getElementById('battle-result-live');if(liveResult)liveResult.textContent='';
+    document.getElementById('b-choices-q').textContent=txt||'왕건은 어떻게 할까?';
+    startChoiceTimer();
+    const grid=document.getElementById('b-choices-grid');
+    grid.innerHTML='';
+    choices.forEach((c,i)=>{
+      const btn=document.createElement('button');
+      btn.className='b-choice-btn';
+      btn.innerHTML=`<span class="arr">▶</span><span class="choice-label">${c.text}<br><small style="font-size:12px;color:#666;font-family:var(--px)">${c.desc}</small></span>`;
+      btn.dataset.idx=i;
+      btn.onclick=()=>makeChoice(i,c,choices);
+      grid.appendChild(btn);
+    });
+  } else {
+    wrap.style.display='flex';
+    box.classList.remove('show');
+  }
+}
+
+function makeChoice(idx, chosen, allChoices){
+  // ⏱ 타이머 정지 + 경과 시간 기록
+  stopChoiceTimer();
+  const elapsed = (performance.now() - _choiceStartTime) / 1000;
+  const isCorrect=chosen.isCorrect;
+  // 속도 보너스는 EXP에 포함하지 않고, 팀 대항(3단계) 정답 시 팀 점수에만 반영
+  const timeBonus=(G.phase===3 && isCorrect)?calcTimeBonus(elapsed):0;
+  const correctChoice=allChoices.find(c=>c.isCorrect);
+  const btns=document.querySelectorAll('.b-choice-btn');
+  btns.forEach((b,i)=>{b.disabled=true;const ok=allChoices[i].isCorrect;b.classList.add(ok?'correct':'wrong');
+    const label=document.createElement('span');label.className='choice-result-label '+(ok?'result-correct':'result-wrong');
+    label.textContent=ok?'정답':'오답';b.appendChild(label);});
+  const liveResult=document.getElementById('battle-result-live');
+  if(liveResult)liveResult.textContent=isCorrect?`${chosen.text}, 정답입니다.`:`${chosen.text}, 오답입니다. 정답은 ${correctChoice.text}입니다.`;
+  const sc=SCENARIOS[G.curLoc];
+
+  // 캐릭터 액션 모션 발동 (850ms 재생 후 자동으로 idle 복귀)
+  playSpriteAction(document.getElementById('b-sprite-player'), 0);
+  playSpriteAction(document.getElementById('b-sprite-enemy'), 150);
+
+  // HP 애니메이션
+  const ehp=document.getElementById('b-enemy-hp');
+  if(isCorrect){
+    ehp.style.width='15%';
+    ehp.className='b-hp-fill low';
+    BGM.jingle('correct');
+    if(timeBonus>0) showTimeBonusPopup(timeBonus);
+    const msg = timeBonus > 0
+      ? `왕건의 ${chosen.text}!\n효과는 굉장했다! (⚡${elapsed.toFixed(1)}초)`
+      : `왕건의 ${chosen.text}!\n효과는 굉장했다!`;
+    setBDialog(msg, false);
+  } else {
+    ehp.style.width='55%';
+    ehp.className='b-hp-fill mid';
+    BGM.jingle('wrong');
+    setBDialog(`왕건의 ${chosen.text}...\n${sc.npcName}이(가) 저항했다!`, false);
+  }
+
+  // 스탯 적용 (EXP는 정답 20 / 오답 5 일정값, 속도 보너스는 팀 점수 전용)
+  const prevLv = G.level;
+  const gainedExp = chosen.exp;
+  G.loyalty=Math.min(100,Math.max(0,G.loyalty+chosen.loyalty));
+  G.stability=Math.min(100,Math.max(0,G.stability+chosen.stability));
+  G.exp+=gainedExp;
+  if(timeBonus>0) G.speedBonus+=timeBonus;
+  const newLv=calcLv(G.exp);
+
+  setTimeout(()=>{
+    const bonusText = timeBonus > 0 ? `\n(⚡팀 속도 보너스 +${timeBonus}점)` : '';
+    setBDialog(`왕건은 ${gainedExp} EXP를\n획득했다!${bonusText}`, false);
+
+    if(newLv>prevLv){
+      // 먼저 현재 레벨 바를 100%까지 채운 뒤 새 레벨 구간으로 자연스럽게 동기화
+      updateBattleExpBar(G.exp, prevLv);
+      setTimeout(()=>{
+        G.level=newLv;
+        document.getElementById('b-player-lv').textContent=G.level;
+        updateBattleExpBar(G.exp, G.level, true);
+      }, 700);
+    } else {
+      updateBattleExpBar(G.exp, G.level);
+    }
+
+    setTimeout(()=>{
+      G.visited.add(G.curLoc);
+      // 모든 모드에서 레벨은 항상 EXP와 일치시킴 (레벨업 축하 화면은 2·3단계 유지)
+      if(newLv>prevLv){
+        G.level=newLv;
+        if(G.phase>=2) G.pendingLU=true;
+      }
+
+      // 방문 완료 수와 새 레벨·속도 보너스까지 반영한 뒤 Firebase에 저장
+      if(G.phase===3) saveMyScore();
+
+      // 역사 해설 준비
+      G.pendingExplain={
+        isCorrect,
+        policyName: sc.policyName,
+        chosenText: chosen.text,
+        mainText: sc.policyContext,
+        correctReason: correctChoice.whyCorrect,
+        wrongChoices: allChoices.filter(c=>!c.isCorrect),
+        exp: gainedExp,
+        baseExp: gainedExp,
+        timeBonus,
+        elapsed: elapsed.toFixed(1),
+        loyalty: chosen.loyalty,
+        stability: chosen.stability,
+      };
+      resetSpriteIdle(document.getElementById('b-sprite-player'));
+      resetSpriteIdle(document.getElementById('b-sprite-enemy'));
+      flashTo(()=>showExplain());
+    }, 1600);
+  }, 1600);
+}
+
+function updateBattleExpBar(expOverride, lvOverride, instantReset){
+  const expVal=(typeof expOverride==='number')?expOverride:G.exp;
+  const lvVal=(typeof lvOverride==='number')?lvOverride:G.level;
+  const st=getExpState(expVal, lvVal);
+  const fill=document.getElementById('b-exp-fill');
+  const valEl=document.getElementById('b-exp-val');
+  if(fill){
+    if(instantReset){
+      fill.style.transition='none';
+      fill.style.width='0%';
+      void fill.offsetWidth;
+      fill.style.transition='';
+    }
+    fill.style.width=st.pct+'%';
+  }
+  if(valEl) valEl.textContent=st.battleText;
+}
+
+/* ══════════════════════════════════════
+   역사 해설
+══════════════════════════════════════ */
+function showExplain(){
+  const d=G.pendingExplain;
+  if(!d) return;
+
+  const badge=document.getElementById('exp-badge');
+  badge.textContent=d.isCorrect?'✅ 정답!':'❌ 오답...';
+  badge.className='explain-result-badge '+(d.isCorrect?'correct':'wrong');
+
+  document.getElementById('exp-policy-name').textContent=d.policyName;
+  document.getElementById('exp-chosen-text').textContent=d.chosenText;
+  document.getElementById('exp-main-text').innerHTML=d.mainText.replace(/\n/g,'<br>');
+  document.getElementById('exp-correct-reason').innerHTML=d.correctReason.replace(/\n/g,'<br>');
+
+  // 오답 해설
+  const wl=document.getElementById('exp-wrong-list');
+  wl.innerHTML='';
+  d.wrongChoices.forEach(wc=>{
+    const box=document.createElement('div');
+    box.className='explain-wrong-box';
+    box.innerHTML=`<div class="explain-wrong-title">❌ "${wc.text}" 을 선택하면?</div>
+    <div class="explain-wrong-text">${wc.whyWrong}</div>`;
+    wl.appendChild(box);
+  });
+
+  // 스탯 변화
+  const setChip=(id,val)=>{
+    const el=document.getElementById(id);
+    el.textContent=(val>=0?'+':'')+val;
+    el.className='stat-chip-val '+(val>0?'pos':val<0?'neg':'neu');
+  };
+  setChip('sc-exp',d.exp);
+  setChip('sc-loyalty',d.loyalty);
+  setChip('sc-stability',d.stability);
+
+  // 시간 보너스 칩 (형제 요소 누적 버그 수정 + 팀 대항 점수 전용 표시)
+  const expStatRow=document.getElementById('exp-stat-row');
+  const chipScope=expStatRow && expStatRow.parentElement ? expStatRow.parentElement : document;
+  chipScope.querySelectorAll('.time-bonus-chip').forEach(el=>el.remove());
+  if(G.phase===3 && d.timeBonus>0){
+    const chip=document.createElement('div');
+    chip.className='time-bonus-chip';
+    chip.textContent=`⚡ ${d.elapsed}초 응답 — 팀 속도 보너스 +${d.timeBonus}점 (EXP 별도)`;
+    expStatRow.after(chip);
+  }
+
+  show('explain');
+}
+
+function afterExplain(){
+  if(G.pendingLU){
+    G.pendingLU=false;
+    flashTo(()=>showLevelUp());
+  } else if(G.visited.size===8){
+    flashTo(()=>showFinal());
+  } else {
+    flashTo(()=>{ showMap(); });
+  }
+}
+
+/* ══════════════════════════════════════
+   레벨 업
+══════════════════════════════════════ */
+function calcLv(exp){
+  let lv=1;
+  for(let i=1;i<5;i++){
+    if(exp>=EXP_THRESHOLDS[i]) lv=i+1;
+    else break;
+  }
+  return Math.min(5,lv);
+}
+
+function getTD(){
+  for(let i=TITLES_TABLE.length-1;i>=0;i--){
+    if(G.level>=TITLES_TABLE[i].lv) return TITLES_TABLE[i];
+  }
+  return TITLES_TABLE[0];
+}
+
+function showLevelUp(){
+  BGM.stop();
+  BGM.jingle('levelup');
+  const td=getTD();
+  show('levelup');
+  document.getElementById('lu-title').textContent=`Lv.${G.level} 달성!`;
+  // 캐릭터 스프라이트
+  const sprDiv=document.getElementById('lu-sprite');
+  sprDiv.innerHTML=`<div class="sprite-slot sprite-levelup"></div>`;
+  setSvg(sprDiv.firstElementChild, td.sprite, 'wanggeon');
+  document.getElementById('lu-title-text').textContent=td.title;
+  const levelReward=G.level>=5?'최종 왕건 모습 해금!':'새로운 칭호 해금!';
+  document.getElementById('lu-stats').innerHTML=`
+    <div class="lu-stat-row"><span class="lu-stat-k">칭호</span><span class="lu-stat-v">${td.title}</span></div>
+    <div class="lu-stat-row"><span class="lu-stat-k">성장</span><span class="lu-stat-v">Lv.${G.level} 달성!</span></div>
+    <div class="lu-stat-row"><span class="lu-stat-k">보상</span><span class="lu-stat-v">${levelReward}</span></div>
+  `;
+}
+
+function afterLevelUp(){
+  if(G.visited.size===8){ flashTo(()=>showFinal()); }
+  else { flashTo(()=>{ showMap(); }); }
+}
+
+/* ══════════════════════════════════════
+   리더보드
+══════════════════════════════════════ */
+/* ══════════════════════════════════════
+   Firebase 실시간 경쟁 시스템 (scripts/firebase.js 위임)
+══════════════════════════════════════ */
+// Firebase 준비 여부 확인
+function fbReady() { return FB.isReady(); }
+
+// DB 경로 헬퍼 — 수업 세션 단위로 분리
+function sessionRef(path) { return FB.sessionRef(path); }
+
+// 내 점수 Firebase에 저장
+async function saveMyScore(){
+  if(!fbReady()||G.team<0||!G.nickname||!G.playerId)return;
+  try{
+    const score=G.exp+G.loyalty+G.stability+(G.speedBonus||0);
+    await FB.savePlayerScore(G.playerId,{
+      playerId:G.playerId,nickname:G.nickname,team:G.team,
+      teamName:TEAMS[G.team].name,teamEmoji:TEAMS[G.team].emoji,score,
+      exp:G.exp,speedBonus:G.speedBonus||0,loyalty:G.loyalty,stability:G.stability,
+      visited:G.visited.size,level:G.level
+    });
+  }catch(e){console.warn('FB save error:',e);}
+}
+
+// 전체 점수 초기화 (교사용)
+async function resetAllScores() {
+  if (!fbReady()) return;
+  if (!confirm('오늘 모든 플레이어의 점수를 초기화하시겠습니까?\n(교사만 사용하세요)')) return;
+  try {
+    await FB.removePlayers();
+    renderLeaderboard();
+  } catch(e) { alert('초기화 실패: ' + e.message); }
+}
+
+// 리더보드 실시간 구독 시작
+function startScorePoll() {
+  if (!fbReady() || G.phase !== 3) return;
+  stopScorePoll();
+  watchSessionEnd(); // 수업 종료 신호 감지 시작
+  FB.subscribePlayers((rawData) => {
+    _fbRawData = rawData;
+    if (document.getElementById('leaderboard-screen').classList.contains('active')) {
+      renderLeaderboard();
+    }
+    // 지도 HUD의 팀 순위도 갱신
+    updateTeamRankBadge();
+  });
+}
+
+function stopSessionEndWatch(){
+  FB.stopSessionEndWatch();
+}
+function stopScorePoll(){
+  FB.stopAllSubscriptions();
+}
+
+// 원시 데이터 캐시
+let _fbRawData = {};
+
+// 팀별 집계 (팀 내 최고 점수자 기준)
+function aggregateByTeam(rawData){
+  const teams=TEAMS.map((t,i)=>({...t,idx:i,score:0,totalScore:0,rawTotalScore:0,
+    playerCount:0,completed:0,avgScore:0,players:[],countedPlayers:[]}));
+  Object.values(rawData).map(normalizePlayerRecord).forEach(p=>{const t=teams[p.team];if(t)t.players.push(p);});
+  teams.forEach(t=>{t.players.sort((a,b)=>b.score-a.score);t.playerCount=t.players.length;
+    t.rawTotalScore=t.players.reduce((s,p)=>s+p.score,0);
+    t.completed=t.players.filter(p=>p.visited>=8).length;
+    t.avgScore=t.playerCount?Math.round(t.rawTotalScore/t.playerCount):0;});
+  const counts=teams.filter(t=>t.playerCount>0).map(t=>t.playerCount);
+  const min=counts.length?Math.min(...counts):0,max=counts.length?Math.max(...counts):0;
+  const useTopN=counts.length>=2&&min<max;
+  teams.forEach(t=>{t.countedPlayers=useTopN?t.players.slice(0,min):t.players.slice();
+    t.score=t.countedPlayers.reduce((s,p)=>s+p.score,0);t.totalScore=t.score;});
+  const ranked=teams.sort((a,b)=>(b.score-a.score)||(a.idx-b.idx));
+  ranked.useTopN=useTopN;ranked.topN=useTopN?min:null;return ranked;
+}
+
+// 지도 화면 팀 순위 배지 업데이트
+function updateTeamRankBadge() {
+  if (G.phase !== 3 || G.team < 0) return;
+  const teams = aggregateByTeam(_fbRawData);
+  const myRank = teams.findIndex(t => t.idx === G.team) + 1;
+  const badge  = document.getElementById('team-badge-hud');
+  if (badge) badge.textContent = TEAMS[G.team].emoji + ' ' + ['1위','2위','3위','4위'][myRank-1] || '';
+}
+
+// 현재 학생 점수 및 오프라인 결과 코드 생성
+function buildMyReceiptCode(){
+  const score = G.exp + G.loyalty + G.stability + (G.speedBonus || 0);
+  return FB.encodeResultCode({
+    classCode: G.classCode || FB.getClassCode() || '기본수업',
+    team: G.team,
+    nickname: G.nickname,
+    score,
+    exp: G.exp,
+    speedBonus: G.speedBonus || 0,
+    loyalty: G.loyalty,
+    stability: G.stability,
+    visited: G.visited.size,
+    level: G.level,
+    playerId: G.playerId
+  });
+}
+
+function copyTextFallback(text, onSuccess, onFail){
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function' && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(onSuccess).catch(() => legacyCopy());
+  } else {
+    legacyCopy();
+  }
+  function legacyCopy(){
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;left:-9999px;top:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) onSuccess(); else onFail();
+    } catch (e) { onFail(); }
+  }
+}
+
+function copyReceiptCode(textareaId, statusId){
+  const ta = document.getElementById(textareaId);
+  const st = document.getElementById(statusId);
+  if (!ta) return;
+  copyTextFallback(
+    ta.value,
+    () => { if (st) st.textContent = '✅ 복사 완료! 선생님이 안내한 곳(패들렛·채팅 등)에 붙여넣으세요.'; },
+    () => { ta.select(); if (st) st.textContent = '⚠️ 자동 복사 실패 — 위 상자의 코드를 직접 선택해 복사하세요.'; }
+  );
+}
+
+// 리더보드 렌더링
+function renderLeaderboard() {
+  if (G.phase !== 3 || G.team < 0) return;
+  const list = document.getElementById('lb-list');
+  const ruleEl = document.getElementById('lb-score-rule');
+  if (!fbReady()) {
+    const score = G.exp + G.loyalty + G.stability + (G.speedBonus || 0);
+    const t = TEAMS[G.team];
+    const code = buildMyReceiptCode();
+    const cls = G.classCode || FB.getClassCode() || '기본수업';
+    if (ruleEl) ruleEl.textContent = `오프라인 수업 코드 모드 · 수업 코드: ${cls}`;
+    list.innerHTML = `
+      <div class="receipt-card" style="margin-top:4px;">
+        <div class="receipt-card-title">📋 내 현재 점수 · 결과 코드</div>
+        <div class="receipt-card-sub">
+          ${t.emoji} ${escapeHtml(t.name)} · <strong style="color:var(--gold)">${escapeHtml(G.nickname)}</strong><br>
+          현재 점수 <strong style="color:#8df0a8">${score}점</strong> (${G.visited.size}/8 거점 완료)<br>
+          Firebase 미연결 상태이므로 완료 후(또는 수업 종료 시) 아래 결과 코드를 선생님께 제출하세요.
+        </div>
+        <textarea id="lb-receipt-code" class="receipt-code-box" rows="3" readonly onclick="this.select()">${code}</textarea>
+        <button type="button" class="btn-receipt-copy" onclick="copyReceiptCode('lb-receipt-code','lb-receipt-status')">
+          📋 결과 코드 복사하기
+        </button>
+        <div id="lb-receipt-status" class="receipt-copy-status"></div>
+      </div>
+    `;
+    const oldTime = document.getElementById('lb-time');
+    if (oldTime) oldTime.remove();
+    return;
+  }
+
+  saveMyScore(); // 현재 점수 반영
+
+  const teams=aggregateByTeam(_fbRawData);
+  const maxScore=Math.max(...teams.map(t=>t.score),1);
+  const sessionTag = G.classCode ? `[${G.classCode}] ` : '';
+  if(ruleEl)ruleEl.textContent=sessionTag + (teams.useTopN?`모둠 인원이 달라 상위 ${teams.topN}명 점수만 합산`:'모둠 인원이 같아 전체 학생 점수를 합산');
+  const medals   = ['🥇','🥈','🥉','4위'];
+  const rankCls  = ['r1','r2','r3',''];
+
+  list.innerHTML = '';
+
+  teams.forEach((t, rank) => {
+    const isMe  = t.idx === G.team;
+    const topP  = t.players.sort((a,b)=>b.score-a.score)[0];
+    const row   = document.createElement('div');
+    row.className = 'lb-row ' + rankCls[rank] + (isMe ? ' me' : '');
+
+    const playerList=t.countedPlayers.slice(0,3)
+      .map(p=>`<span style="color:${isCurrentPlayer(p)?'var(--gold)':'#888'};font-size:12px">${escapeHtml(p.nickname)} ${toSafeInteger(p.score)}점</span>`).join(' · ');
+
+    row.innerHTML = `
+      <div class="lb-medal">${medals[rank]}</div>
+      <div class="lb-team-ico">${t.emoji}</div>
+      <div class="lb-team-info">
+        <div class="lb-team-name">${t.name}${isMe?' ← 우리!':''} <span style="color:var(--green);font-size:12px">${t.playerCount}명 참여</span></div>
+        <div style="margin:3px 0;min-height:14px">${playerList || '<span style="color:#444;font-size:12px">아직 없음</span>'}</div>
+        <div class="lb-sbar"><div class="lb-sbar-fill" style="width:${(t.score/maxScore)*100}%"></div></div>
+      </div>
+      <div style="text-align:right">
+        <div class="lb-pts">${t.score}점</div>
+        <div style="color:#555;font-size:12px">${teams.useTopN?`상위 ${teams.topN}명`:'전체 합산'}</div>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+
+  // 개인 순위
+  const allPlayers=Object.values(_fbRawData).map(normalizePlayerRecord).sort((a,b)=>b.score-a.score);
+  const myRank=allPlayers.findIndex(isCurrentPlayer)+1;
+  let timeEl = document.getElementById('lb-time');
+  if (!timeEl) {
+    timeEl = document.createElement('div');
+    timeEl.id = 'lb-time';
+    timeEl.style.cssText = 'color:#444;font-size:12px;text-align:center;padding:8px 0 4px;';
+    list.after(timeEl);
+  }
+  const now = new Date();
+  timeEl.innerHTML=`<span style="color:var(--gold)">${escapeHtml(G.nickname)}</span> 개인순위 ${myRank>0?myRank+'위':'-'} &nbsp;|&nbsp; ↻ 실시간 자동 갱신`;
+}
+
+
+
+/* ══════════════════════════════════════
+   FINAL
+══════════════════════════════════════ */
+function showFinal(){
+  const td=getTD(),finalScore=Math.round((G.loyalty+G.stability)/2);
+  const rank=finalScore>=80?'최고의 통일 군주':finalScore>=60?'유능한 고려 건국자':'통일의 기반을 세운 군주';
+  const trophy=finalScore>=80?'🏆':finalScore>=60?'🎖️':'🌟';
+  const msg=finalScore>=80?'충성도와 안정도를 균형 있게 높여 후삼국을 안정적으로 통일했습니다! 고려 왕조의 든든한 기반을 세웠습니다.':finalScore>=60?'민심과 국가 안정을 고르게 고려해 고려 왕조를 건설했습니다. 두 지표를 조금 더 균형 있게 높여보세요!':'고려 건국의 기반은 마련했지만 민심과 국가 안정 중 부족한 부분이 남았습니다. 정책 선택을 다시 살펴보세요!';
+
+  document.getElementById('final-trophy').textContent=trophy;
+  document.getElementById('f-lv').textContent='Lv.'+G.level;
+  document.getElementById('f-title').textContent=td.title;
+  document.getElementById('f-exp').textContent=G.exp+' EXP';
+  document.getElementById('f-loyalty').textContent=G.loyalty+'%';
+  document.getElementById('f-stability').textContent=G.stability+'%';
+  document.getElementById('f-rank').textContent=rank;
+  document.getElementById('final-msg').textContent=msg;
+  document.getElementById('final-title').textContent=finalScore>=80?'후삼국 완전 통일!':finalScore>=60?'고려 건국 완성!':'고려 건국의 기반 마련!';
+  const receiptCard = document.getElementById('final-receipt-card');
+  const lbFinalBtn = document.getElementById('btn-final-lb');
+  if (G.phase === 3 && G.team >= 0) {
+    if (!fbReady()) {
+      const teamScore = G.exp + G.loyalty + G.stability + (G.speedBonus || 0);
+      const cls = G.classCode || FB.getClassCode() || '기본수업';
+      const meta = document.getElementById('final-receipt-meta');
+      const codeBox = document.getElementById('final-receipt-code');
+      const st = document.getElementById('final-receipt-status');
+      if (meta) meta.innerHTML = `수업 코드 <strong style="color:var(--gold)">${escapeHtml(cls)}</strong> · ${TEAMS[G.team].emoji} ${escapeHtml(TEAMS[G.team].name)}<br>팀 반영 점수: <strong style="color:#8df0a8">${teamScore}점</strong> (EXP+충성+안정+속도)`;
+      if (codeBox) codeBox.value = buildMyReceiptCode();
+      if (st) st.textContent = '';
+      if (receiptCard) receiptCard.style.display = 'block';
+      if (lbFinalBtn) lbFinalBtn.style.display = 'none';
+    } else {
+      if (receiptCard) receiptCard.style.display = 'none';
+      if (lbFinalBtn) lbFinalBtn.style.display = 'block';
+    }
+  } else {
+    if (receiptCard) receiptCard.style.display = 'none';
+    if (lbFinalBtn) lbFinalBtn.style.display = 'none';
+  }
+  show('final');
+  BGM.play('ending');
+}
+
+/* ══════════════════════════════════════
+   RESTART
+══════════════════════════════════════ */
+function restart(){
+  stopChoiceTimer();
+  stopScorePoll();
+  G={phase:G.phase,nickname:'',playerId:'',classCode:G.classCode||FB.getClassCode()||'',level:1,exp:0,speedBonus:0,loyalty:50,stability:50,
+    visited:new Set(),curLoc:null,encStep:0,pendingLU:false,
+    pendingExplain:null,team:-1};
+  _fbRawData={};
+  const b=document.getElementById('team-badge-hud');
+  b.classList.remove('show');
+  const lbBtn=document.getElementById('lb-btn-map');
+  if(lbBtn) lbBtn.remove();
+  flashTo(()=>{ show('title'); BGM.play('title'); });
+}
+
+
+/* 뮤트 토글 */
+function toggleMuteBGM(){
+  const muted=BGM.toggleMute(),b=document.getElementById('mute-btn');
+  document.getElementById('mute-icon').textContent=muted?'🔇':'🎵';
+  document.getElementById('mute-status-text').textContent=muted?'배경음악 꺼짐':'배경음악 켜짐';
+  const l=muted?'배경음악 꺼짐. 누르면 켜기':'배경음악 켜짐. 누르면 끄기';
+  b.setAttribute('aria-label',l);b.setAttribute('aria-pressed',muted?'true':'false');b.title=l;b.style.opacity=muted?'.5':'1';
+}
+
+/* 타이틀·닉네임 도트 캐릭터 초기 렌더 */
+setSvg(document.getElementById('title-sprite-player'), 'titleWanggeon', 'wanggeon');
+setSvg(document.getElementById('title-sprite-enemy'), 'titleHojok', 'hojok');
+setSvg(document.getElementById('nick-sprite-player'), 'nickWanggeon', 'wanggeon');
+
+/* ══════════════════════════════════════
+   교사 전용 메뉴
+   비밀번호: 1234  (파일 내 TEACHER_PW 에서 변경 가능)
+══════════════════════════════════════ */
+const TEACHER_PW = '1894';
+let teacherAuthed = false;
+
+function teacherGoBack() {
+  // 팀대항 모드이고 게임 진행 중이면 리더보드로, 아니면 이전 화면으로
+  const prev = G.prevScreen || 'map';
+  flashTo(() => {
+    if (G.phase === 3 && prev !== 'title' && prev !== 'nickname' && prev !== 'team') {
+      show('leaderboard');
+    } else {
+      show(prev);
+    }
+  });
+}
+
+function openTeacherMenu() {
+  G.prevScreen = G.currentScreen; // 현재 화면 기록
+  document.getElementById('teacher-pw-input').value = '';
+  document.getElementById('teacher-status').textContent = '';
+  document.getElementById('teacher-status').className = 'teacher-status';
+  document.getElementById('teacher-menu').style.display = 'none';
+  teacherAuthed = false;
+  flashTo(() => show('teacher'));
+}
+
+function refreshTeacherConnectionUI() {
+  const badge = document.getElementById('teacher-conn-badge');
+  const liveBox = document.getElementById('teacher-live-controls');
+  const codeInput = document.getElementById('teacher-class-code');
+  const filterInput = document.getElementById('offline-filter-code');
+  const summary = FB.getConfigSummary();
+  const curCode = G.classCode || FB.getClassCode();
+  if (codeInput && codeInput.value !== curCode) codeInput.value = curCode;
+  if (filterInput && !filterInput.value && curCode) filterInput.value = curCode;
+
+  if (badge) {
+    if (summary.configured) {
+      const srcLabel = summary.source === 'url' ? '공유 링크' : (summary.source === 'storage' ? '교사 브라우저 저장' : 'firebase.js 파일');
+      badge.innerHTML = `🟢 <strong>실시간 Firebase 연동됨</strong> (${escapeHtml(summary.projectId)} · ${srcLabel})<br>세션 경로: ${escapeHtml(FB.getSessionLabel())}`;
+      badge.style.color = '#8df0a8';
+    } else {
+      badge.innerHTML = '📋 <strong>오프라인 수업 코드 모드</strong> (Firebase 미연결 — 결과 코드 집계 방식)';
+      badge.style.color = '#f8d878';
+    }
+  }
+  if (liveBox) {
+    liveBox.style.opacity = summary.configured ? '1' : '0.55';
+  }
+}
+
+function onTeacherClassCodeChange(val) {
+  const norm = FB.normalizeClassCode(val);
+  const el = document.getElementById('teacher-class-code');
+  if (el && el.value !== norm) el.value = norm;
+  G.classCode = FB.setClassCode(norm);
+  const filterInput = document.getElementById('offline-filter-code');
+  if (filterInput) filterInput.value = norm;
+  refreshTeacherConnectionUI();
+  if (fbReady()) {
+    startScorePoll();
+  }
+}
+
+function openFbConfigModal() {
+  const ov = document.getElementById('fb-config-overlay');
+  const ta = document.getElementById('fb-config-input');
+  const msg = document.getElementById('fb-config-msg');
+  const summary = FB.getConfigSummary();
+  if (ta) {
+    ta.value = summary.config ? JSON.stringify(summary.config, null, 2) : '';
+  }
+  if (msg) msg.textContent = '';
+  if (ov) ov.style.display = 'flex';
+}
+
+function closeFbConfigModal() {
+  const ov = document.getElementById('fb-config-overlay');
+  if (ov) ov.style.display = 'none';
+}
+
+async function saveFbConfigFromModal() {
+  const ta = document.getElementById('fb-config-input');
+  const msg = document.getElementById('fb-config-msg');
+  const parsed = FB.parseConfigInput(ta ? ta.value : '');
+  if (!parsed.ok) {
+    if (msg) { msg.style.color = '#ff8080'; msg.textContent = '❌ ' + parsed.error; }
+    return;
+  }
+  FB.saveCustomConfig(parsed.config);
+  if (msg) { msg.style.color = '#f8d030'; msg.textContent = '⏳ Firebase 연결 테스트 중...'; }
+  const ok = await FB.init(true);
+  if (ok) {
+    if (msg) { msg.style.color = '#8df0a8'; msg.textContent = `✅ 연결 성공! (${parsed.config.projectId}) 이제 [학생용 접속 링크 복사]로 공유하세요.`; }
+    if (G.phase === 3) startScorePoll();
+  } else {
+    if (msg) { msg.style.color = '#ff8080'; msg.textContent = '⚠️ 설정은 저장되었으나 연결에 실패했습니다. https:// 호스팅 주소와 DB 규칙을 확인하세요.'; }
+  }
+  refreshTeacherConnectionUI();
+  loadTeacherStats();
+}
+
+function resetFbConfigFromModal() {
+  if (!confirm('이 브라우저에 저장된 Firebase 설정을 삭제하고 오프라인 모드로 전환할까요?')) return;
+  FB.clearCustomConfig();
+  _fbRawData = {};
+  const ta = document.getElementById('fb-config-input');
+  const msg = document.getElementById('fb-config-msg');
+  if (ta) ta.value = '';
+  if (msg) { msg.style.color = '#f8d030'; msg.textContent = '✅ 삭제 완료 — 오프라인 수업 코드 모드로 전환되었습니다.'; }
+  refreshTeacherConnectionUI();
+  loadTeacherStats();
+}
+
+function copyTeacherShareLink() {
+  const st = document.getElementById('teacher-link-status');
+  if (window.location && window.location.protocol === 'file:') {
+    if (st) {
+      st.style.color = '#ff9090';
+      st.textContent = '⚠️ 내 컴퓨터 파일(file://) 상태에서는 공유 링크를 만들 수 없습니다. 웹 호스팅(GitHub Pages·Netlify 등)에 올린 뒤 사용하세요.';
+    }
+    return;
+  }
+  const code = document.getElementById('teacher-class-code')?.value || G.classCode;
+  const link = FB.buildShareLink(code);
+  const summary = FB.getConfigSummary();
+  copyTextFallback(
+    link,
+    () => {
+      if (st) {
+        st.style.color = '#8df0a8';
+        st.textContent = summary.configured
+          ? '✅ 내 Firebase + 수업 코드가 포함된 학생 접속 링크를 복사했습니다!'
+          : '✅ 수업 코드가 포함된 오프라인 학생 접속 링크를 복사했습니다!';
+      }
+    },
+    () => {
+      if (st) { st.style.color = '#f8d030'; st.textContent = link; }
+    }
+  );
+}
+
+function aggregateOfflineCodes() {
+  const rawText = document.getElementById('offline-codes-input')?.value || '';
+  const filterCode = document.getElementById('offline-filter-code')?.value || '';
+  const st = document.getElementById('offline-agg-status');
+  const { records, stats } = FB.parseResultCodesBulk(rawText, filterCode);
+
+  if (stats.totalFound === 0) {
+    if (st) { st.style.color = '#ff9090'; st.textContent = '❌ 유효한 결과 코드(WG1-...)를 찾지 못했습니다.'; }
+    return;
+  }
+  if (stats.validCount === 0) {
+    if (st) {
+      st.style.color = '#ff9090';
+      st.textContent = `❌ 집계 대상이 0명입니다. (다른 수업 코드 ${stats.wrongClassCount}건 제외, 손상 ${stats.invalidCount}건 / 발견된 코드: ${stats.classCodes.join(', ') || '없음'})`;
+    }
+    return;
+  }
+
+  _fbRawData = records;
+  loadTeacherStats();
+  const notes = [];
+  if (stats.wrongClassCount > 0) notes.push(`다른 수업 ${stats.wrongClassCount}건 제외`);
+  if (stats.duplicateCount > 0) notes.push(`중복 ${stats.duplicateCount}건 최신 반영`);
+  if (stats.invalidCount > 0) notes.push(`손상 ${stats.invalidCount}건 무시`);
+  if (st) {
+    st.style.color = '#8df0a8';
+    st.textContent = `✅ 총 ${stats.validCount}명 집계 완료${notes.length ? ' (' + notes.join(', ') + ')' : ''}`;
+  }
+  renderFinalTeamRanking();
+  flashTo(() => show('final-team'));
+}
+
+function clearOfflineCodes() {
+  const ta = document.getElementById('offline-codes-input');
+  const st = document.getElementById('offline-agg-status');
+  if (ta) ta.value = '';
+  if (!fbReady()) {
+    _fbRawData = {};
+    loadTeacherStats();
+  }
+  if (st) { st.style.color = '#aaa'; st.textContent = '집계 입력칸을 비웠습니다.'; }
+}
+
+async function checkTeacherPw() {
+  const pw = document.getElementById('teacher-pw-input').value;
+  const statusEl = document.getElementById('teacher-status');
+  if (pw === TEACHER_PW) {
+    teacherAuthed = true;
+    statusEl.textContent = '✅ 인증 완료';
+    statusEl.className = 'teacher-status';
+    document.getElementById('teacher-menu').style.display = 'block';
+    refreshTeacherConnectionUI();
+    if (FB.isConfigured() && !fbReady()) {
+      await initFirebase();
+    }
+    if (fbReady()) {
+      // 교사 화면에서도 실시간 현황을 바로 구독
+      FB.subscribePlayers((rawData) => {
+        _fbRawData = rawData;
+        if (document.getElementById('teacher-screen').classList.contains('active')) {
+          loadTeacherStats();
+        }
+      });
+    }
+    loadTeacherStats();
+  } else {
+    statusEl.textContent = '❌ 비밀번호가 틀렸습니다';
+    statusEl.className = 'teacher-status err';
+    document.getElementById('teacher-pw-input').value = '';
+  }
+}
+
+function loadTeacherStats() {
+  const statsEl = document.getElementById('teacher-stats');
+  const raw = _fbRawData || {};
+  const players = Object.values(raw).map(normalizePlayerRecord);
+  if (!fbReady() && players.length === 0) {
+    statsEl.innerHTML = '<span style="color:#aaa">Firebase 미연결 — 아래에서 오프라인 결과 코드를 붙여넣어 집계하거나, 위에서 내 Firebase를 연결하세요.</span>';
+    return;
+  }
+  if (players.length === 0) {
+    statsEl.innerHTML = `<span style="color:#888">아직 참여자 없음 (${escapeHtml(FB.getSessionLabel())})</span>`;
+    return;
+  }
+  const teams = TEAMS.map((t, i) => ({
+    ...t, idx: i,
+    players: players.filter(p => p.team === i)
+  }));
+  let html = '';
+  teams.forEach(t => {
+    const cnt = t.players.length;
+    const done = t.players.filter(p => p.visited >= 8).length;
+    html += `<div>${t.emoji} ${t.name}: <span style="color:var(--gold)">${cnt}명 참여</span>`;
+    if (cnt > 0) html += ` (완료 ${done}명)`;
+    html += '</div>';
+  });
+  const modeLabel = fbReady() ? `실시간 · ${escapeHtml(FB.getSessionLabel())}` : '오프라인 결과 코드 집계';
+  html += `<div style="margin-top:6px;color:#8892b0;font-size:12px">총 ${players.length}명 (${modeLabel})</div>`;
+  statsEl.innerHTML = html;
+}
+
+async function teacherReset() {
+  if (!teacherAuthed) return;
+  if (!confirm('오늘 모든 점수를 초기화합니다.')) return;
+  const statusEl = document.getElementById('teacher-status');
+  statusEl.textContent = '⏳ 초기화 중...';
+  statusEl.className = 'teacher-status';
+  try {
+    if (fbReady()) {
+      stopScorePoll();
+      await FB.resetSession();
+      _fbRawData = {};
+      const lbList = document.getElementById('lb-list');
+      if (lbList) lbList.innerHTML = '<div style="color:#555;font-size:13px;text-align:center;padding:20px;">참여자 없음</div>';
+      const lbTime = document.getElementById('lb-time');
+      if (lbTime) lbTime.remove();
+      loadTeacherStats();
+      setTimeout(function(){ startScorePoll(); }, 600);
+      statusEl.textContent = '✅ 초기화 완료! 점수가 삭제됐습니다.';
+      statusEl.className = 'teacher-status';
+    } else {
+      statusEl.textContent = '⚠️ Firebase 미연결';
+      statusEl.className = 'teacher-status err';
+    }
+  } catch(e) {
+    statusEl.textContent = '❌ 오류: ' + e.message;
+    statusEl.className = 'teacher-status err';
+  }
+}
+
+async function teacherEndSession() {
+  if (!teacherAuthed) return;
+  if (!confirm('수업을 종료하고 모든 학생 화면에\n최종 팀 순위를 표시합니다.\n진행하시겠습니까?')) return;
+  try {
+    if (fbReady()) {
+      // Firebase에 종료 신호 기록
+      await FB.endSession('teacher');
+    }
+    // 교사 본인도 최종 순위 화면으로
+    renderFinalTeamRanking();
+    flashTo(() => show('final-team'));
+  } catch(e) {
+    alert('오류: ' + e.message);
+  }
+}
+
+/* ══════════════════════════════════════
+   최종 팀 순위 화면
+══════════════════════════════════════ */
+function renderFinalTeamRanking(){
+  const raw=_fbRawData||{},players=Object.values(raw).map(normalizePlayerRecord);
+  const teams=aggregateByTeam(raw),useTopN=teams.useTopN,topN=teams.topN;
+  const medals=['🥇','🥈','🥉','4위'];
+  const maxScore = Math.max(...teams.map(t => t.totalScore), 1);
+  const list=document.getElementById('final-team-list');list.innerHTML='';
+  const info=document.createElement('div');info.style.cssText='color:#aaa;font-size:12px;text-align:center;margin-bottom:12px;padding:10px;background:#0a0a18;border:1px solid #333;';
+  info.textContent=useTopN?`모둠 인원이 달라 각 모둠의 상위 ${topN}명 점수를 합산했습니다.`:'모둠 인원이 같아 전체 학생 점수를 합산했습니다.';
+  list.appendChild(info);teams.forEach((t, rank) => {
+    const isMe = t.idx === G.team;
+    const card = document.createElement('div');
+    card.style.cssText = `background:${rank===0?'#1a1a0a':'#101020'};
+      border:3px solid ${rank===0?'var(--gold)':rank===1?'#aaa':rank===2?'#c07030':'#333'};
+      padding:16px;margin-bottom:10px;`;
+
+    const topPlayers=t.countedPlayers.slice(0,5).map(p=>{
+      const me=isCurrentPlayer(p);return `<span style="color:${me?'var(--gold)':'#888'};font-size:12px">${me?'★':''} ${escapeHtml(p.nickname)} ${toSafeInteger(p.score)}점</span>`;
+    }).join(' &nbsp; ');
+
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="font-size:28px">${medals[rank]}</div>
+        <div style="font-size:32px">${t.emoji}</div>
+        <div style="flex:1">
+          <div style="color:var(--cream);font-size:16px;font-weight:bold">
+            ${t.name}${isMe?' <span style="color:var(--gold);font-size:13px">← 우리!</span>':''}
+          </div>
+          <div style="color:#666;font-size:12px;margin-top:2px">
+            ${t.playerCount}명 참여 · 완료 ${t.completed}명${useTopN?` · 상위 ${Math.min(topN,t.playerCount)}명 반영`:''}
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="color:var(--gold);font-size:22px;font-weight:bold">${t.totalScore}점</div>
+          <div style="color:#555;font-size:12px">${useTopN?`상위 ${topN}명 합산`:'전체 합산'}</div>
+        </div>
+      </div>
+      <div style="height:8px;background:#222;border:1px solid #333;margin-bottom:8px;overflow:hidden">
+        <div style="height:100%;background:var(--gold);width:${(t.totalScore/maxScore)*100}%;transition:width 1s"></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;min-height:20px">${topPlayers || '<span style="color:#444;font-size:12px">참여자 없음</span>'}</div>
+    `;
+    list.appendChild(card);
+  });
+
+  // 개인 순위도 표시
+  if (players.length > 0) {
+    const personalRank = document.createElement('div');
+    personalRank.style.cssText = 'background:#0a0a18;border:2px solid #2a2a4a;padding:14px;margin-bottom:10px;';
+    const allSorted = players.sort((a,b) => b.score - a.score);
+    const myRank=allSorted.findIndex(isCurrentPlayer)+1;
+    const top5=allSorted.slice(0,5).map((p,i)=>{const isMe=isCurrentPlayer(p);
+      return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1a1a2a;font-size:13px">
+        <span style="color:${isMe?'var(--gold)':'#888'}">${['🥇','🥈','🥉','4','5'][i]} ${isMe?'★':''} ${escapeHtml(p.nickname)}</span>
+        <span style="color:${isMe?'var(--gold)':'#888'}">${toSafeInteger(p.score)}점</span>
+      </div>`;
+    }).join('');
+    personalRank.innerHTML = `
+      <div style="color:#888;font-size:12px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #2a2a3a">
+        🏅 개인 순위 TOP5
+      </div>
+      ${top5}
+      ${myRank > 0 && G.nickname ? `<div style="color:var(--gold);font-size:12px;margin-top:8px;text-align:center">
+        나의 순위: ${myRank}위 / ${players.length}명
+      </div>` : ''}
+    `;
+    list.appendChild(personalRank);
+  }
+}
+
+/* ══════════════════════════════════════
+   Firebase 종료 신호 감지 — 모든 학생에게 최종 순위 표시
+══════════════════════════════════════ */
+function watchSessionEnd() {
+  stopSessionEndWatch();
+  if (!fbReady() || G.phase !== 3) return;
+  FB.watchSessionEnd(() => {
+    if (G.currentScreen === 'final-team' || G.currentScreen === 'teacher') return;
+    // 교사가 방금 종료 신호를 보냄 → 최종 순위 화면으로
+    renderFinalTeamRanking();
+    flashTo(() => show('final-team'));
+  });
+}
+
+/* ── 배포용 초기 부트스트랩 (공유 링크 파라미터 반영 및 교사 버튼 노출) ── */
+(function bootstrapDistributionApp() {
+  const params = FB.getUrlParams();
+  if (params.code) {
+    G.classCode = FB.setClassCode(params.code);
+  }
+  if (params.mode === 'team' || params.fb || params.code) {
+    const teamTab = document.querySelectorAll('.mode-tab')[2];
+    if (teamTab) setMode(3, teamTab);
+  }
+  const teacherBtn = document.getElementById('teacher-btn');
+  if (teacherBtn) teacherBtn.style.display = 'flex';
+})();
+
+</script>
+</body>
+</html>
